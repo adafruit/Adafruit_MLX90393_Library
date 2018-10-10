@@ -22,7 +22,7 @@
 #include <Wire.h>
 #include <SPI.h>
 
-#define MLX90393_DEFAULT_ADDR   (0x44)
+#define MLX90393_DEFAULT_ADDR   (0x0C)
 
 #define MLX90393_AXIS_ALL       (0x0E)  /**< X+Y+Z axis bits for commands. */
 #define MLX90393_CONF1          (0x00)  /**< Gain */
@@ -96,8 +96,8 @@ class Adafruit_MLX90393 {
         Adafruit_MLX90393(int32_t sensorID);
         Adafruit_MLX90393(int32_t sensorID, TwoWire* wireBus);
 
-        boolean begin(uint8_t i2caddr = MLX90393_DEFAULT_ADDR);
-        boolean setGain(enum mlx90393_gain gain);
+        bool begin(uint8_t i2caddr = MLX90393_DEFAULT_ADDR);
+        bool setGain(enum mlx90393_gain gain);
         enum mlx90393_gain getGain(void);
         bool readData(float *x, float *y, float *z);
 
@@ -109,8 +109,8 @@ class Adafruit_MLX90393 {
         uint8_t _i2caddr;
         int32_t _sensorID;
 
-        uint8_t  transceive  (uint8_t *txbuf, uint8_t txlen,
-                              uint8_t *rxbuf, uint8_t rxlen);
+        bool transceive(uint8_t *txbuf, uint8_t txlen,
+                        uint8_t *rxbuf, uint8_t rxlen);
 };
 
 #endif /* ADAFRUIT_MLX90393_H */

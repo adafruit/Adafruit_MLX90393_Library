@@ -61,7 +61,7 @@ Adafruit_MLX90393::Adafruit_MLX90393(int32_t sensorID, TwoWire* wireBus)
 bool
 Adafruit_MLX90393::begin(uint8_t i2caddr)
 {
-    bool rc;
+    bool ok;
 
     switch(_transport) {
         case MLX90393_TRANSPORT_I2C:
@@ -73,16 +73,13 @@ Adafruit_MLX90393::begin(uint8_t i2caddr)
             break;
     }
 
-    /* Set gain and config sensor. */
-    rc = setGain(_gain);
+    /* Set gain and sensor config. */
+    ok = setGain(_gain);
 
-    if (rc) {
-        _initialized = false;
-        return false;
-    } else {
-        _initialized = true;
-        return true;
-    }
+    /* Set the initialised flag based on the I2C response. */
+    _initialized = ok;
+
+    return ok;
 }
 
 /**
@@ -95,7 +92,7 @@ Adafruit_MLX90393::begin(uint8_t i2caddr)
 bool
 Adafruit_MLX90393::setGain(enum mlx90393_gain gain)
 {
-    uint8_t status;
+    bool ok;
 
     _gain = gain;
 
@@ -106,14 +103,10 @@ Adafruit_MLX90393::setGain(enum mlx90393_gain gain)
                       0x00 };
 
     /* Perform the transaction. */
-    status = transceive(tx, sizeof tx, NULL, 0);
+    ok = transceive(tx, sizeof tx, NULL, 0);
 
     /* Check status byte for errors. */
-    if ((status & MLX90393_STATUS_MASK) != MLX90393_STATUS_OK) {
-        return false;
-    } else {
-        return true;
-    }
+    return ok;
 }
 
 /**
@@ -140,14 +133,21 @@ Adafruit_MLX90393::getGain(void)
 bool
 Adafruit_MLX90393::readData(float *x, float *y, float *z)
 {
-    uint8_t status;
-    uint8_t tx[1] = { MLX90393_REG_SM | MLX90393_AXIS_ALL };
+    bool ok;
+    uint8_t tx_mode[1] = { MLX90393_REG_SM | MLX90393_AXIS_ALL };
+    uint8_t tx[1] = { MLX90393_REG_RM | MLX90393_AXIS_ALL };
     uint8_t rx[6] = { 0 };
     uint16_t xi, yi, zi;
 
-    /* Get a single data sample. */
-    status = transceive(tx, sizeof tx, rx, sizeof rx);
-    if ((status & MLX90393_STATUS_MASK) != MLX90393_STATUS_OK) {
+    /* Set the device to single measurement mode */
+    ok = transceive(tx_mode, sizeof tx_mode, NULL, 0);
+    if (!ok) {
+        return false;
+    }
+
+    /* Read a single data sample. */
+    ok = transceive(tx, sizeof tx, rx, sizeof rx);
+    if (!ok) {
         return false;
     }
 
@@ -160,7 +160,7 @@ Adafruit_MLX90393::readData(float *x, float *y, float *z)
     *y = (float)yi * mlx90393_lsb_lookup[_gain][0][0];
     *z = (float)zi * mlx90393_lsb_lookup[_gain][0][1];
 
-    return true;
+    return ok;
 }
 
 /**
@@ -175,7 +175,7 @@ Adafruit_MLX90393::readData(float *x, float *y, float *z)
  *
  * @return The status byte from the IC.
  */
-uint8_t
+bool
 Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
     uint8_t *rxbuf, uint8_t rxlen)
 {
@@ -213,14 +213,17 @@ Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
             /* Always request the status byte. */
             status = _wire->read();
             /* Read any other bytes that have been requested. */
-            for (i = 0; i < rxlen; i++)
-            {
-                rxbuf[i] = _wire->read();
+            if (rxbuf != NULL) {
+                for (i = 0; i < rxlen; i++)
+                {
+                    rxbuf[i] = _wire->read();
+                }
             }
             break;
         case MLX90393_TRANSPORT_SPI:
             break;
     }
 
-    return status;
+    /* Mask out bytes available in the status response. */
+    return ((status >> 2) == 0 ? true : false);
 }
