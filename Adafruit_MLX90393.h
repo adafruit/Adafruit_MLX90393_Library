@@ -3,7 +3,7 @@
 
   Designed specifically to work with the MLX90393 breakout from Adafruit:
 
-  ----> https://www.adafruit.com/products/XXXX
+  ----> https://www.adafruit.com/products/4022
 
   These sensors use I2C to communicate, 2 pins are required to interface.
 
@@ -95,6 +95,7 @@ class Adafruit_MLX90393 {
     public:
         Adafruit_MLX90393(int32_t sensorID);
         Adafruit_MLX90393(int32_t sensorID, TwoWire* wireBus);
+        Adafruit_MLX90393(int32_t sensorID, int8_t cs);
 
         bool begin(uint8_t i2caddr = MLX90393_DEFAULT_ADDR);
         bool setGain(enum mlx90393_gain gain);
@@ -108,6 +109,7 @@ class Adafruit_MLX90393 {
         bool _initialized;
         uint8_t _i2caddr;
         int32_t _sensorID;
+        int8_t  _cs;
 
         bool transceive(uint8_t *txbuf, uint8_t txlen,
                         uint8_t *rxbuf, uint8_t rxlen);

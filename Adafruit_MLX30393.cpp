@@ -3,7 +3,7 @@
 
   Designed specifically to work with the MLX90393 breakout from Adafruit:
 
-  ----> https://www.adafruit.com/products/XXXX
+  ----> https://www.adafruit.com/products/4022
 
   These sensors use I2C to communicate, 2 pins are required to interface.
 
@@ -18,11 +18,10 @@
 #include "Adafruit_MLX90393.h"
 
 /**
- * Instantiates a new Adafruit_MLX90393 class instance.
+ * Instantiates a new Adafruit_MLX90393 class instance using I2C.
  *
  * @param sensorID  An optional ID # so you can track this sensor, it will
  *                  tag sensorEvents you create.
- *
  */
 Adafruit_MLX90393::Adafruit_MLX90393(int32_t sensorID)
 {
@@ -32,10 +31,12 @@ Adafruit_MLX90393::Adafruit_MLX90393(int32_t sensorID)
     _initialized = false;
     _gain        = MLX90393_GAIN_1X;
     _sensorID    = sensorID;
+    _cs          = -1;
+    _i2caddr     = 0;
 }
 
 /**
- * Instantiates a new Adafruit_MLX90393 class instance.
+ * Instantiates a new Adafruit_MLX90393 class instance using I2C.
  *
  * @param sensorID  An optional ID # so you can track this sensor, it will
  *                  tag sensorEvents you create.
@@ -49,6 +50,30 @@ Adafruit_MLX90393::Adafruit_MLX90393(int32_t sensorID, TwoWire* wireBus)
     _initialized = false;
     _gain        = MLX90393_GAIN_1X;
     _sensorID    = sensorID;
+    _cs          = -1;
+    _i2caddr     = 0;
+}
+
+/**
+ * Instantiates a new Adafruit_MLX90393 class instance using SPI.
+ *
+ * @param sensorID  An optional ID # so you can track this sensor, it will
+ *                  tag sensorEvents you create.
+ * @param cs        The CS/SSEL pin to use with SPI.
+ */
+Adafruit_MLX90393::Adafruit_MLX90393(int32_t sensorID, int8_t cs)
+{
+    /* Set the I2C bus instance */
+    _wire        = NULL;
+    _transport   = MLX90393_TRANSPORT_SPI;
+    _initialized = false;
+    _gain        = MLX90393_GAIN_1X;
+    _sensorID    = sensorID;
+    _cs          = cs;
+    _i2caddr     = 0;
+
+    /* Set CS to output by default. */
+    pinMode(_cs, OUTPUT);
 }
 
 /**
@@ -69,7 +94,10 @@ Adafruit_MLX90393::begin(uint8_t i2caddr)
             _i2caddr = i2caddr;
             break;
         case MLX90393_TRANSPORT_SPI:
-            /* TODO! */
+            SPI.begin();
+            SPI.setDataMode(SPI_MODE0);
+            SPI.setBitOrder(MSBFIRST);
+            SPI.setClockDivider(SPI_CLOCK_DIV16);
             break;
     }
 
@@ -186,8 +214,7 @@ Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
     switch(_transport) {
         case MLX90393_TRANSPORT_I2C:
             _wire->beginTransmission(_i2caddr);
-            for (i = 0; i < txlen; i++)
-            {
+            for (i = 0; i < txlen; i++) {
                 _wire->write(txbuf[i]);
             }
             _wire->endTransmission();
@@ -195,14 +222,11 @@ Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
             delay(10);
             break;
         case MLX90393_TRANSPORT_SPI:
-            #if 0
             digitalWrite(_cs, LOW);
-            SPI.transfer((reg << 1) | 0x00);
-            for (uint8_t i = 0; i < len; i++){
-              SPI.transfer(buffer[i]);
+            for (uint8_t i = 0; i < txlen; i++) {
+              SPI.transfer(txbuf[i]);
             }
             digitalWrite(_cs, HIGH);
-            #endif
             break;
     }
 
@@ -214,13 +238,19 @@ Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
             status = _wire->read();
             /* Read any other bytes that have been requested. */
             if (rxbuf != NULL) {
-                for (i = 0; i < rxlen; i++)
-                {
+                for (i = 0; i < rxlen; i++) {
                     rxbuf[i] = _wire->read();
                 }
             }
             break;
         case MLX90393_TRANSPORT_SPI:
+            digitalWrite(_cs, LOW);
+            /* Always request the status byte. */
+            status = SPI.transfer(0xFF);
+            for (uint8_t i = 0; i < rxlen; i++) {
+              rxbuf[i] = SPI.transfer(0xFF);
+            }
+            digitalWrite(_cs, HIGH);
             break;
     }
 

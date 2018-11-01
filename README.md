@@ -3,7 +3,7 @@
 This driver is for use with the Adafruit MLX90393 Breakout, and has been
 designed specifically for these boards:
 
-  ----> https://www.adafruit.com/products
+  ----> https://www.adafruit.com/product/4022
 
 Adafruit invests time and resources providing this open source code,
 please support Adafruit and open-source hardware by purchasing
