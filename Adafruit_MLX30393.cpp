@@ -126,7 +126,7 @@ Adafruit_MLX90393::setGain(enum mlx90393_gain gain)
     /* Set CONF1..4, including gain. */
     uint8_t tx[4] = { 0x60,
                       0x00,
-                      (_gain << MLX90393_GAIN_SHIFT) | MLX90393_HALL_CONF,
+                      (uint8_t)((_gain << MLX90393_GAIN_SHIFT) | MLX90393_HALL_CONF),
                       0x00 };
 
     /* Perform the transaction. */
