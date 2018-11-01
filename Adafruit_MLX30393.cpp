@@ -127,7 +127,7 @@ Adafruit_MLX90393::setGain(enum mlx90393_gain gain)
     /* Set CONF1..4, including gain. */
     uint8_t tx[4] = { 0x60,
                       0x00,
-                      _gain << MLX90393_GAIN_SHIFT | MLX90393_HALL_CONF,
+                      (_gain << MLX90393_GAIN_SHIFT) | MLX90393_HALL_CONF,
                       0x00 };
 
     /* Perform the transaction. */
@@ -207,7 +207,7 @@ bool
 Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
     uint8_t *rxbuf, uint8_t rxlen)
 {
-    uint8_t status;
+    uint8_t status = 0;
     uint8_t i;
 
     /* Write stage */
@@ -233,7 +233,7 @@ Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
     /* Read stage. */
     switch(_transport) {
         case MLX90393_TRANSPORT_I2C:
-            _wire->requestFrom(_i2caddr, rxlen + 1);
+            _wire->requestFrom(_i2caddr, (uint8_t)((rxlen + 1) & 0xFF));
             /* Always request the status byte. */
             status = _wire->read();
             /* Read any other bytes that have been requested. */
