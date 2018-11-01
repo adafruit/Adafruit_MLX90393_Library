@@ -97,7 +97,6 @@ Adafruit_MLX90393::begin(uint8_t i2caddr)
             SPI.begin();
             SPI.setDataMode(SPI_MODE0);
             SPI.setBitOrder(MSBFIRST);
-            SPI.setClockDivider(SPI_CLOCK_DIV16);
             break;
     }
 
