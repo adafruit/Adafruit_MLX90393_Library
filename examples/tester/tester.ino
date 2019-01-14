@@ -69,12 +69,10 @@ void test_int_pin(void)
 
   print_test("Testing INT pin");
 
-  /* Setup pin and attach interrupt. */
-  pinMode(INT_PIN, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(INT_PIN), int_isr_handler, RISING);
-
   /* Request a new data sample, which should cause the INT to fire
    * when a new (replacement) data sample is available. */
+  sensor.readData(&x, &y, &z);
+  sensor.readData(&x, &y, &z);
   sensor.readData(&x, &y, &z);
 
   for (uint32_t c = 0; c < 1000; c++) {
@@ -97,17 +95,14 @@ void test_trig_pin(void)
 
   print_test("Testing TRIG pin");
 
-  /* Setup pin and attach interrupt. */
-  pinMode(TRIG_PIN, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(TRIG_PIN), trig_isr_handler, RISING);
-
   /* Enable INT on the TRIG_INT pin (instead of default TRIG) */
   sensor.setTrigInt(true);
 
   /* Request a new data sample, which should cause the TRIG to fire
    * when a new (replacement) data sample is available. */
   sensor.readData(&x, &y, &z);
-  delay(100);
+  sensor.readData(&x, &y, &z);
+  sensor.readData(&x, &y, &z);
 
   for (uint32_t c = 0; c < 1000; c++) {
     if (g_trig_times_fired > trig_count_prev) {
@@ -132,6 +127,12 @@ void setup(void)
   /* Setup LED */
   pinMode(LED_BUILTIN, OUTPUT);
 
+  /* Setup input pins and attach interrupts. */
+  pinMode(TRIG_PIN, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(TRIG_PIN), trig_isr_handler, RISING);
+  pinMode(INT_PIN, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(INT_PIN), int_isr_handler, RISING);
+
   Serial.println("Starting Adafruit MLX90393 Demo\n");
 
   /* Init test */
@@ -140,8 +141,8 @@ void setup(void)
 
   /* Test Suite */
   test_read_data();
-  test_trig_pin();
   test_int_pin();
+  test_trig_pin();
 
   Serial.println("\nDONE! All tests OK!");
 }
