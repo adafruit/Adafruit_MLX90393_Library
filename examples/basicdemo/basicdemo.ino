@@ -11,7 +11,7 @@ void setup(void)
   /* Wait for serial on USB platforms. */
   while(!Serial);
 
-  Serial.println("Starting Adafruit MLX90393 Tester");
+  Serial.println("Starting Adafruit MLX90393 Demo");
 
   if (sensor.begin())
   {

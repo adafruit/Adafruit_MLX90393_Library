@@ -29,7 +29,7 @@
 #define MLX90393_CONF2          (0x01)  /**< Burst, comm mode */
 #define MLX90393_CONF3          (0x02)  /**< Oversampling, filter, res. */
 #define MLX90393_CONF4          (0x03)  /**< Sensitivty drift. */
-#define MLX90393_GAIN_SHIFT     (1<<4)  /**< Left-shift for gain bits. */
+#define MLX90393_GAIN_SHIFT     (4)     /**< Left-shift for gain bits. */
 #define MLX90393_RES_2_15       (0x00)  /**< Resolution (2^15). */
 #define MLX90393_HALL_CONF      (0x0C)  /**< Hall plate spinning rate adj. */
 #define MLX90393_STATUS_OK      (0x00)  /**< OK value for status response. */
@@ -99,6 +99,7 @@ class Adafruit_MLX90393 {
 
         bool begin(uint8_t i2caddr = MLX90393_DEFAULT_ADDR);
         bool setGain(enum mlx90393_gain gain);
+        bool setTrigInt(bool state);
         enum mlx90393_gain getGain(void);
         bool readData(float *x, float *y, float *z);
 

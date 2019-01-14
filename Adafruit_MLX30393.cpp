@@ -123,11 +123,46 @@ Adafruit_MLX90393::setGain(enum mlx90393_gain gain)
 
     _gain = gain;
 
-    /* Set CONF1..4, including gain. */
-    uint8_t tx[4] = { 0x60,
+    /* Set CONF1, including gain. */
+    uint8_t tx[4] = { MLX90393_REG_WR,
                       0x00,
-                      (uint8_t)((_gain << MLX90393_GAIN_SHIFT) | MLX90393_HALL_CONF),
-                      0x00 };
+                      (uint8_t)(((_gain & 0x7) << MLX90393_GAIN_SHIFT) | MLX90393_HALL_CONF),
+                      (MLX90393_CONF1 & 0x3F) << 2};
+
+    /* Perform the transaction. */
+    ok = transceive(tx, sizeof tx, NULL, 0);
+
+    /* Check status byte for errors. */
+    return ok;
+}
+
+/**
+ * Sets the TRIG_INT pin to the specified function.
+ *
+ * @param state  'true/1' sets the pin to INT, 'false/0' to TRIG.
+ *
+ * @return True if the operation succeeded, otherwise false.
+ */
+bool
+Adafruit_MLX90393::setTrigInt(bool state)
+{
+    bool ok;
+    uint8_t trig_int = 0;
+
+    if (state) {
+        /* Set the INT (bit 8 = 1). */
+        trig_int = 0x80;
+    }
+
+    /* Set CONF2 bit 15 to 'state' */
+    uint8_t tx[4] = { MLX90393_REG_WR,
+                      0x00,                 /* Lower 8 bits */
+                      trig_int,             /* Upper 8 bits */
+                      (MLX90393_CONF2 & 0x3f) << 2};
+    if (state) {
+        /* Set TRIG_INT to INT, from default value of TRIG. */
+        tx[1] = 0x80;
+    };
 
     /* Perform the transaction. */
     ok = transceive(tx, sizeof tx, NULL, 0);
