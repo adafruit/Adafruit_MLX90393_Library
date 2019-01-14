@@ -80,6 +80,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a9720584f1cbc4bae3f690bac78214319"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e1319fd05eaa514e33ad4755a01c1b5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#a2e1319fd05eaa514e33ad4755a01c1b5">setGain</a> (enum mlx90393_gain gain)</td></tr>
 <tr class="separator:a2e1319fd05eaa514e33ad4755a01c1b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb8bf5493776fa58fd6e4e604d233df5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#adb8bf5493776fa58fd6e4e604d233df5">setTrigInt</a> (bool state)</td></tr>
+<tr class="separator:adb8bf5493776fa58fd6e4e604d233df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3fce39e21bb131e6c0ee1ba5a69b5f2"><td class="memItemLeft" align="right" valign="top">enum mlx90393_gain&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#ab3fce39e21bb131e6c0ee1ba5a69b5f2">getGain</a> (void)</td></tr>
 <tr class="separator:ab3fce39e21bb131e6c0ee1ba5a69b5f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d06509810afabf30455282196234178"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#a4d06509810afabf30455282196234178">readData</a> (float *x, float *y, float *z)</td></tr>
@@ -231,6 +233,32 @@ Public Member Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">gain</td><td>The gain level to set.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if the operation succeeded, otherwise false. </dd></dl>
+
+</div>
+</div>
+<a id="adb8bf5493776fa58fd6e4e604d233df5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb8bf5493776fa58fd6e4e604d233df5">&#9670;&nbsp;</a></span>setTrigInt()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Adafruit_MLX90393::setTrigInt </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>state</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Sets the TRIG_INT pin to the specified function.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">state</td><td>'true/1' sets the pin to INT, 'false/0' to TRIG.</td></tr>
   </table>
   </dd>
 </dl>
