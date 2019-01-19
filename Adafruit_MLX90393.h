@@ -22,7 +22,7 @@
 #include <Wire.h>
 #include <SPI.h>
 
-#define MLX90393_DEFAULT_ADDR   (0x0C)
+#define MLX90393_DEFAULT_ADDR   (0x0C)  /* Can also be 0x18, depending on IC */
 
 #define MLX90393_AXIS_ALL       (0x0E)  /**< X+Y+Z axis bits for commands. */
 #define MLX90393_CONF1          (0x00)  /**< Gain */

@@ -2,9 +2,10 @@
 
 #include "Adafruit_MLX90393.h"
 
-#define INT_PIN         (2)   /* Pin D2 is interrupt 0 on the 328 */
-#define TRIG_PIN        (3)   /* Pin D3 is interrupt 1 on the 328 */
-#define SENB_PIN        (4)
+/* Pinout based on M0 Basic Feather */
+#define INT_PIN         (5)   /* Pin D2 is interrupt 0 on the 328 */
+#define TRIG_PIN        (6)   /* Pin D3 is interrupt 1 on the 328 */
+#define SENB_PIN        (9)   /* AKA MISO */
 
 Adafruit_MLX90393 sensor = Adafruit_MLX90393(393);
 uint32_t g_int_times_fired = 0;
