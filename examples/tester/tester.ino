@@ -6,6 +6,7 @@
 #define INT_PIN         (5)   /* Pin D2 is interrupt 0 on the 328 */
 #define TRIG_PIN        (6)   /* Pin D3 is interrupt 1 on the 328 */
 #define SENB_PIN        (9)   /* AKA MISO */
+#define POWER_PIN       (10)  /* Power the board via GPIO since we don't have reset */
 
 Adafruit_MLX90393 sensor = Adafruit_MLX90393(393);
 uint32_t g_int_times_fired = 0;
@@ -140,6 +141,35 @@ void test_senb_pin(void)
   print_result(true);
 }
 
+void reset_sensor(void)
+{
+  digitalWrite(POWER_PIN, LOW);
+  delay(200);
+  digitalWrite(POWER_PIN, HIGH);
+  delay(200);
+}
+
+void test_spi_mode(void)
+{
+  pinMode(SENB_PIN, OUTPUT);
+
+  print_test("Resetting into SPI mode via SENB/CS");
+  digitalWrite(SENB_PIN, LOW);  /* SPI mode */
+  reset_sensor();
+  print_result(true);
+
+  print_test("Checking we're no longer in I2C mode");
+  uint8_t result = sensor.begin();
+  print_result(result ? false : true);
+
+  print_test("Resetting back into I2C mode");
+  digitalWrite(SENB_PIN, HIGH); /* I2C mode */
+  reset_sensor();
+  print_result(sensor.begin());
+
+  pinMode(SENB_PIN, INPUT);
+}
+
 void setup(void)
 {
   Serial.begin(9600);
@@ -156,8 +186,12 @@ void setup(void)
   pinMode(INT_PIN, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(INT_PIN), int_isr_handler, RISING);
   pinMode(SENB_PIN, INPUT);
+  pinMode(POWER_PIN, OUTPUT);
+  digitalWrite(POWER_PIN, HIGH);
 
   Serial.println("Starting Adafruit MLX90393 Demo\n");
+
+  reset_sensor();
 
   /* Init test */
   print_test("Checking for MLX90393");
@@ -168,6 +202,7 @@ void setup(void)
   test_int_pin();
   test_trig_pin();
   test_senb_pin();
+  test_spi_mode();
 
   Serial.println("\nDONE! All tests OK!");
 }
