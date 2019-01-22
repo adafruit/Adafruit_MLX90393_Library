@@ -2,19 +2,16 @@
 
 #include "Adafruit_MLX90393.h"
 
-/* '393' is the arbitrary number that identifies this sensor in a logging system,
- *  and is part of Adafruit_Sensor. You can change this to any value you want, and
- *  it is purely a convenience to help distinguish multiple sensors in a logging
- *  system.
- */
-Adafruit_MLX90393 sensor = Adafruit_MLX90393(393);
+Adafruit_MLX90393 sensor = Adafruit_MLX90393();
 
 void setup(void)
 {
   Serial.begin(9600);
 
   /* Wait for serial on USB platforms. */
-  while(!Serial);
+  while(!Serial) {
+      delay(10);
+  }
 
   Serial.println("Starting Adafruit MLX90393 Demo");
 

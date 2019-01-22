@@ -20,60 +20,16 @@
 /**
  * Instantiates a new Adafruit_MLX90393 class instance using I2C.
  *
- * @param sensorID  An optional ID # so you can track this sensor, it will
- *                  tag sensorEvents you create.
- */
-Adafruit_MLX90393::Adafruit_MLX90393(int32_t sensorID)
-{
-    /* Set the I2C bus instance */
-    _wire        = &Wire;
-    _transport   = MLX90393_TRANSPORT_I2C;
-    _initialized = false;
-    _gain        = MLX90393_GAIN_1X;
-    _sensorID    = sensorID;
-    _cs          = -1;
-    _i2caddr     = 0;
-}
-
-/**
- * Instantiates a new Adafruit_MLX90393 class instance using I2C.
- *
- * @param sensorID  An optional ID # so you can track this sensor, it will
- *                  tag sensorEvents you create.
  * @param wireBus   TwoWire instance to use for I2C communication.
  */
-Adafruit_MLX90393::Adafruit_MLX90393(int32_t sensorID, TwoWire* wireBus)
+Adafruit_MLX90393::Adafruit_MLX90393(TwoWire* wireBus)
 {
     /* Set the I2C bus instance */
     _wire        = wireBus;
     _transport   = MLX90393_TRANSPORT_I2C;
     _initialized = false;
     _gain        = MLX90393_GAIN_1X;
-    _sensorID    = sensorID;
-    _cs          = -1;
     _i2caddr     = 0;
-}
-
-/**
- * Instantiates a new Adafruit_MLX90393 class instance using SPI.
- *
- * @param sensorID  An optional ID # so you can track this sensor, it will
- *                  tag sensorEvents you create.
- * @param cs        The CS/SSEL pin to use with SPI.
- */
-Adafruit_MLX90393::Adafruit_MLX90393(int32_t sensorID, int8_t cs)
-{
-    /* Set the I2C bus instance */
-    _wire        = NULL;
-    _transport   = MLX90393_TRANSPORT_SPI;
-    _initialized = false;
-    _gain        = MLX90393_GAIN_1X;
-    _sensorID    = sensorID;
-    _cs          = cs;
-    _i2caddr     = 0;
-
-    /* Set CS to output by default. */
-    pinMode(_cs, OUTPUT);
 }
 
 /**
@@ -92,11 +48,6 @@ Adafruit_MLX90393::begin(uint8_t i2caddr)
         case MLX90393_TRANSPORT_I2C:
             _wire->begin();
             _i2caddr = i2caddr;
-            break;
-        case MLX90393_TRANSPORT_SPI:
-            SPI.begin();
-            SPI.setDataMode(SPI_MODE0);
-            SPI.setBitOrder(MSBFIRST);
             break;
     }
 
@@ -255,13 +206,6 @@ Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
             /* Wait a bit befoore requesting a response. */
             delay(10);
             break;
-        case MLX90393_TRANSPORT_SPI:
-            digitalWrite(_cs, LOW);
-            for (uint8_t i = 0; i < txlen; i++) {
-              SPI.transfer(txbuf[i]);
-            }
-            digitalWrite(_cs, HIGH);
-            break;
     }
 
     /* Read stage. */
@@ -276,15 +220,6 @@ Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
                     rxbuf[i] = _wire->read();
                 }
             }
-            break;
-        case MLX90393_TRANSPORT_SPI:
-            digitalWrite(_cs, LOW);
-            /* Always request the status byte. */
-            status = SPI.transfer(0xFF);
-            for (uint8_t i = 0; i < rxlen; i++) {
-              rxbuf[i] = SPI.transfer(0xFF);
-            }
-            digitalWrite(_cs, HIGH);
             break;
     }
 
