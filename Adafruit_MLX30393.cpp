@@ -49,6 +49,9 @@ Adafruit_MLX90393::begin(uint8_t i2caddr)
             _wire->begin();
             _i2caddr = i2caddr;
             break;
+        case MLX90393_TRANSPORT_SPI:
+            /* Currently not handled due to HW layout. */
+            break;
     }
 
     /* Set gain and sensor config. */
@@ -206,6 +209,9 @@ Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
             /* Wait a bit befoore requesting a response. */
             delay(10);
             break;
+        case MLX90393_TRANSPORT_SPI:
+            /* Currently not handled due to HW layout. */
+            break;
     }
 
     /* Read stage. */
@@ -220,6 +226,9 @@ Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
                     rxbuf[i] = _wire->read();
                 }
             }
+            break;
+        case MLX90393_TRANSPORT_SPI:
+            /* Currently not handled due to HW layout. */
             break;
     }
 
