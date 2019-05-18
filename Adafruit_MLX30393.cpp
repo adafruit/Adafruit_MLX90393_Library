@@ -153,7 +153,7 @@ Adafruit_MLX90393::readData(float *x, float *y, float *z)
     uint8_t tx_mode[1] = { MLX90393_REG_SM | MLX90393_AXIS_ALL };
     uint8_t tx[1] = { MLX90393_REG_RM | MLX90393_AXIS_ALL };
     uint8_t rx[6] = { 0 };
-    uint16_t xi, yi, zi;
+    int16_t xi, yi, zi;
 
     /* Set the device to single measurement mode */
     ok = transceive(tx_mode, sizeof tx_mode, NULL, 0);
