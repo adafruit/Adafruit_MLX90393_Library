@@ -1,4 +1,4 @@
-# Adafruit MLX90393 Magnetic Field Sensor Driver  [![Build Status](https://travis-ci.com/adafruit/Adafruit_MLX90393_Library.svg?branch=master)](https://travis-ci.com/adafruit/Adafruit_MLX90393_Library)
+# Adafruit MLX90393 Magnetic Field Sensor Driver [![Build Status](https://github.com/adafruit/Adafruit_MLX90393_Library/workflows/Arduino%20Library%20CI/badge.svg)](https://github.com/adafruit/Adafruit_MLX90393_Library/actions)[![Documentation](https://github.com/adafruit/ci-arduino/blob/master/assets/doxygen_badge.svg)](http://adafruit.github.io/Adafruit_MLX90393_Library/html/index.html)
 
 This driver is for use with the Adafruit MLX90393 Breakout, and has been
 designed specifically for these boards:
