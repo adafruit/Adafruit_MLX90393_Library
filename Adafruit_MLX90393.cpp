@@ -157,9 +157,9 @@ bool Adafruit_MLX90393::readData(float *x, float *y, float *z) {
   yi = (rx[2] << 8) | rx[3];
   zi = (rx[4] << 8) | rx[5];
 
-  *x = (float)xi * mlx90393_lsb_lookup[_gain][0][0];
-  *y = (float)yi * mlx90393_lsb_lookup[_gain][0][0];
-  *z = (float)zi * mlx90393_lsb_lookup[_gain][0][1];
+  *x = (float)xi * mlx90393_lsb_lookup[0][_gain][0][0];
+  *y = (float)yi * mlx90393_lsb_lookup[0][_gain][0][0];
+  *z = (float)zi * mlx90393_lsb_lookup[0][_gain][0][1];
 
   return ok;
 }
