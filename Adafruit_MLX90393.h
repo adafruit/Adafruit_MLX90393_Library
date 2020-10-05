@@ -35,7 +35,7 @@
 #define MLX90393_STATUS_OK (0x00)   /**< OK value for status response. */
 #define MLX90393_STATUS_MASK (0xFC) /**< Mask for status OK checks. */
 
-#define MLX90393_HALL_CONF_2PHASE_SCALING     98.0/75.0
+#define MLX90393_HALL_CONF_2PHASE_SCALING 98.0 / 75.0
 
 /** Register map. */
 enum {
@@ -128,7 +128,8 @@ public:
   Adafruit_MLX90393(TwoWire *wireBus = &Wire);
 
   bool begin(uint8_t i2caddr = MLX90393_DEFAULT_ADDR);
-  bool setGain(enum mlx90393_gain gain, enum mlx90393_hall_conf hall_conf = MLX90393_HALL_CONF_4PHASE);
+  bool setGain(enum mlx90393_gain gain,
+               enum mlx90393_hall_conf hall_conf = MLX90393_HALL_CONF_4PHASE);
   bool setTrigInt(bool state);
   enum mlx90393_gain getGain(void);
   bool readData(float *x, float *y, float *z);

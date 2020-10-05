@@ -68,7 +68,8 @@ bool Adafruit_MLX90393::begin(uint8_t i2caddr) {
  *
  * @return True if the operation succeeded, otherwise false.
  */
-bool Adafruit_MLX90393::setGain(enum mlx90393_gain gain, enum mlx90393_hall_conf hall_conf) {
+bool Adafruit_MLX90393::setGain(enum mlx90393_gain gain,
+                                enum mlx90393_hall_conf hall_conf) {
   bool ok;
 
   _gain = gain;
