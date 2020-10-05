@@ -65,6 +65,7 @@ bool Adafruit_MLX90393::begin(uint8_t i2caddr) {
  * Sets the sensor gain to the specified level.
  *
  * @param gain  The gain level to set.
+ * @param hall_conf  Hall plate spinning rate adjustment.
  *
  * @return True if the operation succeeded, otherwise false.
  */
