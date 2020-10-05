@@ -28,6 +28,7 @@ Adafruit_MLX90393::Adafruit_MLX90393(TwoWire *wireBus) {
   _transport = MLX90393_TRANSPORT_I2C;
   _initialized = false;
   _gain = MLX90393_GAIN_1X;
+  _hall_conf = MLX90393_HALL_CONF_2PHASE;
   _i2caddr = 0;
 }
 
@@ -67,15 +68,16 @@ bool Adafruit_MLX90393::begin(uint8_t i2caddr) {
  *
  * @return True if the operation succeeded, otherwise false.
  */
-bool Adafruit_MLX90393::setGain(enum mlx90393_gain gain) {
+bool Adafruit_MLX90393::setGain(enum mlx90393_gain gain, enum mlx90393_hall_conf hall_conf) {
   bool ok;
 
   _gain = gain;
+  _hall_conf = hall_conf;
 
   /* Set CONF1, including gain. */
   uint8_t tx[4] = {
       MLX90393_REG_WR, 0x00,
-      (uint8_t)(((_gain & 0x7) << MLX90393_GAIN_SHIFT) | MLX90393_HALL_CONF),
+      (uint8_t)(((_gain & 0x7) << MLX90393_GAIN_SHIFT) | _hall_conf),
       (MLX90393_CONF1 & 0x3F) << 2};
 
   /* Perform the transaction. */
@@ -160,6 +162,12 @@ bool Adafruit_MLX90393::readData(float *x, float *y, float *z) {
   *x = (float)xi * mlx90393_lsb_lookup[0][_gain][0][0];
   *y = (float)yi * mlx90393_lsb_lookup[0][_gain][0][0];
   *z = (float)zi * mlx90393_lsb_lookup[0][_gain][0][1];
+
+  if (_hall_conf == MLX90393_HALL_CONF_2PHASE) {
+    *x *= MLX90393_HALL_CONF_2PHASE_SCALING;
+    *y *= MLX90393_HALL_CONF_2PHASE_SCALING;
+    *z *= MLX90393_HALL_CONF_2PHASE_SCALING;
+  }
 
   return ok;
 }

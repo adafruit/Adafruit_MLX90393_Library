@@ -35,6 +35,8 @@
 #define MLX90393_STATUS_OK (0x00)   /**< OK value for status response. */
 #define MLX90393_STATUS_MASK (0xFC) /**< Mask for status OK checks. */
 
+#define MLX90393_HALL_CONF_2PHASE_SCALING     98.0/75.0
+
 /** Register map. */
 enum {
   MLX90393_REG_SB = (0x10),  /**< Start burst mode. */
@@ -68,11 +70,17 @@ enum mlx90393_transport {
   MLX90393_TRANSPORT_SPI
 };
 
-/** Lookup table to convert raw values to uT based on [HALLCONF][GAIN_SEL][RES].
+/** Hall plate configuration. */
+enum mlx90393_hall_conf {
+  MLX90393_HALL_CONF_2PHASE = (0x00),
+  MLX90393_HALL_CONF_4PHASE = (0x0C)
+};
+
+/** Lookup table to convert raw values to uT based on [TEMP][GAIN_SEL][RES].
  */
 const float mlx90393_lsb_lookup[2][8][4][2] = {
 
-    /* HALLCONF = 0xC (default) */
+    /* HALLCONF = 0xC (default), sensitivity in uT/LSB, TC off, T=25°C */
     {
         /* GAIN_SEL = 0, 5x gain */
         {{0.751, 1.210}, {1.502, 2.420}, {3.004, 4.840}, {6.009, 9.680}},
@@ -92,7 +100,7 @@ const float mlx90393_lsb_lookup[2][8][4][2] = {
         {{0.150, 0.242}, {0.300, 0.484}, {0.601, 0.968}, {1.202, 1.936}},
     },
 
-    /* HALLCONF = 0x0 */
+    /* HALLCONF = 0xC, sensitivity in uT/LSB, TC off, T=35°C  */
     {
         /* GAIN_SEL = 0, 5x gain */
         {{0.787, 1.267}, {1.573, 2.534}, {3.146, 5.068}, {6.292, 10.137}},
@@ -120,7 +128,7 @@ public:
   Adafruit_MLX90393(TwoWire *wireBus = &Wire);
 
   bool begin(uint8_t i2caddr = MLX90393_DEFAULT_ADDR);
-  bool setGain(enum mlx90393_gain gain);
+  bool setGain(enum mlx90393_gain gain, enum mlx90393_hall_conf hall_conf = MLX90393_HALL_CONF_4PHASE);
   bool setTrigInt(bool state);
   enum mlx90393_gain getGain(void);
   bool readData(float *x, float *y, float *z);
@@ -128,6 +136,7 @@ public:
 private:
   enum mlx90393_transport _transport;
   enum mlx90393_gain _gain;
+  enum mlx90393_hall_conf _hall_conf;
   TwoWire *_wire;
   bool _initialized;
   uint8_t _i2caddr;
