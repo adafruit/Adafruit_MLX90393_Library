@@ -19,8 +19,8 @@
 #define ADAFRUIT_MLX90393_H
 
 #include "Arduino.h"
-#include <Wire.h>
 #include <Adafruit_I2CDevice.h>
+#include <Wire.h>
 
 #define MLX90393_DEFAULT_ADDR (0x0C) /* Can also be 0x18, depending on IC */
 

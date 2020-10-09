@@ -182,7 +182,7 @@ bool Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
                                    uint8_t *rxbuf, uint8_t rxlen) {
   uint8_t status = 0;
   uint8_t i;
-  uint8_t rxbuf2[rxlen+1];
+  uint8_t rxbuf2[rxlen + 1];
 
   /* Write stage */
   switch (_transport) {
@@ -200,9 +200,10 @@ bool Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
   switch (_transport) {
   case MLX90393_TRANSPORT_I2C:
     /* Read status byte plus any others */
-    i2c_dev->read(rxbuf2, rxlen+1);
+    i2c_dev->read(rxbuf2, rxlen + 1);
     status = rxbuf2[0];
-    for (i=0; i<rxlen; i++) rxbuf[i] = rxbuf2[i+1];
+    for (i = 0; i < rxlen; i++)
+      rxbuf[i] = rxbuf2[i + 1];
     break;
   case MLX90393_TRANSPORT_SPI:
     /* Currently not handled due to HW layout. */
