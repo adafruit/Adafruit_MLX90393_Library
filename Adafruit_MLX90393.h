@@ -126,7 +126,7 @@ public:
   bool readData(float *x, float *y, float *z);
 
 protected:
-  Adafruit_I2CDevice *i2c_dev;
+  Adafruit_I2CDevice *i2c_dev; /**< I2CDevice for bus management. */
 
 private:
   enum mlx90393_transport _transport;
