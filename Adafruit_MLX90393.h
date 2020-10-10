@@ -19,7 +19,7 @@
 #define ADAFRUIT_MLX90393_H
 
 #include "Arduino.h"
-#include <SPI.h>
+#include <Adafruit_I2CDevice.h>
 #include <Wire.h>
 
 #define MLX90393_DEFAULT_ADDR (0x0C) /* Can also be 0x18, depending on IC */
@@ -124,6 +124,9 @@ public:
   bool setTrigInt(bool state);
   enum mlx90393_gain getGain(void);
   bool readData(float *x, float *y, float *z);
+
+protected:
+  Adafruit_I2CDevice *i2c_dev; /**< I2CDevice for bus management. */
 
 private:
   enum mlx90393_transport _transport;

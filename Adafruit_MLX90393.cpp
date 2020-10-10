@@ -45,6 +45,8 @@ bool Adafruit_MLX90393::begin(uint8_t i2caddr) {
   case MLX90393_TRANSPORT_I2C:
     _wire->begin();
     _i2caddr = i2caddr;
+    i2c_dev = new Adafruit_I2CDevice(_i2caddr, _wire);
+    i2c_dev->begin();
     break;
   case MLX90393_TRANSPORT_SPI:
     /* Currently not handled due to HW layout. */
@@ -180,15 +182,12 @@ bool Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
                                    uint8_t *rxbuf, uint8_t rxlen) {
   uint8_t status = 0;
   uint8_t i;
+  uint8_t rxbuf2[rxlen + 1];
 
   /* Write stage */
   switch (_transport) {
   case MLX90393_TRANSPORT_I2C:
-    _wire->beginTransmission(_i2caddr);
-    for (i = 0; i < txlen; i++) {
-      _wire->write(txbuf[i]);
-    }
-    _wire->endTransmission();
+    i2c_dev->write(txbuf, txlen);
     /* Wait a bit befoore requesting a response. */
     delay(10);
     break;
@@ -200,15 +199,11 @@ bool Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
   /* Read stage. */
   switch (_transport) {
   case MLX90393_TRANSPORT_I2C:
-    _wire->requestFrom(_i2caddr, (uint8_t)((rxlen + 1) & 0xFF));
-    /* Always request the status byte. */
-    status = _wire->read();
-    /* Read any other bytes that have been requested. */
-    if (rxbuf != NULL) {
-      for (i = 0; i < rxlen; i++) {
-        rxbuf[i] = _wire->read();
-      }
-    }
+    /* Read status byte plus any others */
+    i2c_dev->read(rxbuf2, rxlen + 1);
+    status = rxbuf2[0];
+    for (i = 0; i < rxlen; i++)
+      rxbuf[i] = rxbuf2[i + 1];
     break;
   case MLX90393_TRANSPORT_SPI:
     /* Currently not handled due to HW layout. */
