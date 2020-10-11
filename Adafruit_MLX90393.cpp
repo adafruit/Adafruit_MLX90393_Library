@@ -19,8 +19,6 @@
 
 /**
  * Instantiates a new Adafruit_MLX90393 class instance using I2C.
- *
- * @param wireBus   TwoWire instance to use for I2C communication.
  */
 Adafruit_MLX90393::Adafruit_MLX90393(void) {}
 
@@ -94,17 +92,33 @@ bool Adafruit_MLX90393::reset(void) {
  * @param gain  The gain level to set.
  * @return True if the operation succeeded, otherwise false.
  */
-bool Adafruit_MLX90393::setGain(enum mlx90393_gain gain) {
+bool Adafruit_MLX90393::setGain(mlx90393_gain_t gain) {
   _gain = gain;
 
-  /* Set CONF1, including gain. */
-  uint8_t tx[4] = {
-      MLX90393_REG_WR, 0x00,
-      (uint8_t)(((_gain & 0x7) << MLX90393_GAIN_SHIFT) | MLX90393_HALL_CONF),
-      (MLX90393_CONF1 & 0x3F) << 2};
+  uint16_t data;
+  readRegister(MLX90393_CONF1, &data);
 
-  /* Perform the transaction. */
-  return (transceive(tx, sizeof(tx), NULL, 0, 0) == MLX90393_STATUS_OK);
+  // mask off gain bits
+  data &= ~0x0070;
+  // set gain bits
+  data |= gain << MLX90393_GAIN_SHIFT;
+
+  return writeRegister(MLX90393_CONF1, data);
+}
+
+/**
+ * Gets the current sensor gain.
+ *
+ * @return An enum containing the current gain level.
+ */
+mlx90393_gain_t Adafruit_MLX90393::getGain(void) {
+  uint16_t data;
+  readRegister(MLX90393_CONF1, &data);
+
+  // mask off gain bits
+  data &= 0x0070;
+
+  return (mlx90393_gain_t)(data >> 4);
 }
 
 /**
@@ -131,13 +145,6 @@ bool Adafruit_MLX90393::setTrigInt(bool state) {
   /* Perform the transaction. */
   return (transceive(tx, sizeof(tx), NULL, 0, 0) == MLX90393_STATUS_OK);
 }
-
-/**
- * Gets the current sensor gain.
- *
- * @return An enum containing the current gain level.
- */
-enum mlx90393_gain Adafruit_MLX90393::getGain(void) { return _gain; }
 
 /**
  * Begin a single measurement on all axes
@@ -200,6 +207,32 @@ bool Adafruit_MLX90393::readData(float *x, float *y, float *z) {
     return false;
 
   return readMeasurement(x, y, z);
+}
+
+bool Adafruit_MLX90393::writeRegister(uint8_t reg, uint16_t data) {
+  uint8_t tx[4] = {MLX90393_REG_WR,
+                   data >> 8,   // high byte
+                   data & 0xFF, // low byte
+                   reg << 2};   // the register itself, shift up by 2 bits!
+
+  /* Perform the transaction. */
+  return (transceive(tx, sizeof(tx), NULL, 0, 0) == MLX90393_STATUS_OK);
+}
+
+bool Adafruit_MLX90393::readRegister(uint8_t reg, uint16_t *data) {
+  uint8_t tx[2] = {MLX90393_REG_RR,
+                   reg << 2}; // the register itself, shift up by 2 bits!
+
+  uint8_t rx[2];
+
+  /* Perform the transaction. */
+  if (transceive(tx, sizeof(tx), rx, sizeof(rx), 0) != MLX90393_STATUS_OK) {
+    return false;
+  }
+
+  *data = ((uint16_t)rx[0] << 8) | rx[1];
+
+  return true;
 }
 
 /**************************************************************************/

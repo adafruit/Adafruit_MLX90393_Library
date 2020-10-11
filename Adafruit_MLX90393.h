@@ -54,7 +54,7 @@ enum {
 };
 
 /** Gain settings for CONF1 register. */
-enum mlx90393_gain {
+typedef enum mlx90393_gain {
   MLX90393_GAIN_5X = (0x00),
   MLX90393_GAIN_4X,
   MLX90393_GAIN_3X,
@@ -63,7 +63,7 @@ enum mlx90393_gain {
   MLX90393_GAIN_1_67X,
   MLX90393_GAIN_1_33X,
   MLX90393_GAIN_1X
-};
+} mlx90393_gain_t;
 
 /** Lookup table to convert raw values to uT based on [HALLCONF][GAIN_SEL][RES].
  */
@@ -138,6 +138,9 @@ private:
 
   bool _init(void);
   enum mlx90393_gain _gain;
+  bool readRegister(uint8_t reg, uint16_t *data);
+  bool writeRegister(uint8_t reg, uint16_t data);
+
   bool transceive(uint8_t *txbuf, uint8_t txlen, uint8_t *rxbuf = NULL,
                   uint8_t rxlen = 0, uint8_t interdelay = 10);
 

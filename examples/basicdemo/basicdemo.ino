@@ -19,6 +19,21 @@ void setup(void)
     Serial.println("No sensor found ... check your wiring?");
     while (1) { delay(10); }
   }
+
+
+  sensor.setGain(MLX90393_GAIN_2_5X);
+  // You can check the gain too
+  Serial.print("Gain set to: ");
+  switch (sensor.getGain()) {
+    case MLX90393_GAIN_1X: Serial.println("1 x"); break;
+    case MLX90393_GAIN_1_33X: Serial.println("1.33 x"); break;
+    case MLX90393_GAIN_1_67X: Serial.println("1.67 x"); break;
+    case MLX90393_GAIN_2X: Serial.println("2 x"); break;
+    case MLX90393_GAIN_2_5X: Serial.println("2.5 x"); break;
+    case MLX90393_GAIN_3X: Serial.println("3 x"); break;
+    case MLX90393_GAIN_4X: Serial.println("4 x"); break;
+    case MLX90393_GAIN_5X: Serial.println("5 x"); break;
+  }
 }
 
 void loop(void) {
