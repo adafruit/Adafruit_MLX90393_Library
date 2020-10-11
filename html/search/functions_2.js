@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['getgain',['getGain',['../class_adafruit___m_l_x90393.html#ab3fce39e21bb131e6c0ee1ba5a69b5f2',1,'Adafruit_MLX90393']]]
+  ['exitmode',['exitMode',['../class_adafruit___m_l_x90393.html#af004b3fcdc072b01e9698241a118c745',1,'Adafruit_MLX90393']]]
 ];

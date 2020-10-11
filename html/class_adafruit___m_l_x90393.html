@@ -60,7 +60,6 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="class_adafruit___m_l_x90393-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Adafruit_MLX90393 Class Reference</div>  </div>
@@ -68,32 +67,50 @@ $(function() {
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="_adafruit___m_l_x90393_8h_source.html">Adafruit_MLX90393.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for Adafruit_MLX90393:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="class_adafruit___m_l_x90393.png" usemap="#Adafruit_5FMLX90393_map" alt=""/>
+  <map id="Adafruit_5FMLX90393_map" name="Adafruit_5FMLX90393_map">
+</map>
+ </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a67ed9a2ac3da9d0c35bfd269486f112e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#a67ed9a2ac3da9d0c35bfd269486f112e">Adafruit_MLX90393</a> (TwoWire *wireBus=&amp;Wire)</td></tr>
-<tr class="separator:a67ed9a2ac3da9d0c35bfd269486f112e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9720584f1cbc4bae3f690bac78214319"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#a9720584f1cbc4bae3f690bac78214319">begin</a> (uint8_t i2caddr=MLX90393_DEFAULT_ADDR)</td></tr>
-<tr class="separator:a9720584f1cbc4bae3f690bac78214319"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4228b354912d3991939e08e75f8246b6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#a4228b354912d3991939e08e75f8246b6">Adafruit_MLX90393</a> ()</td></tr>
+<tr class="separator:a4228b354912d3991939e08e75f8246b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a720cc5c8e2403f1d38c0ffdbb2e430ca"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#a720cc5c8e2403f1d38c0ffdbb2e430ca">begin_I2C</a> (uint8_t i2c_addr=MLX90393_DEFAULT_ADDR, TwoWire *wire=&amp;Wire)</td></tr>
+<tr class="memdesc:a720cc5c8e2403f1d38c0ffdbb2e430ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets up the hardware and initializes I2C.  <a href="#a720cc5c8e2403f1d38c0ffdbb2e430ca">More...</a><br /></td></tr>
+<tr class="separator:a720cc5c8e2403f1d38c0ffdbb2e430ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36fd5463190327d8c6afae8b977b6de6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#a36fd5463190327d8c6afae8b977b6de6">reset</a> (void)</td></tr>
+<tr class="separator:a36fd5463190327d8c6afae8b977b6de6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af004b3fcdc072b01e9698241a118c745"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#af004b3fcdc072b01e9698241a118c745">exitMode</a> (void)</td></tr>
+<tr class="separator:af004b3fcdc072b01e9698241a118c745"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08fd174e70728dfb2de9521e506dec09"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#a08fd174e70728dfb2de9521e506dec09">readMeasurement</a> (float *x, float *y, float *z)</td></tr>
+<tr class="separator:a08fd174e70728dfb2de9521e506dec09"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e0d04fa7ef3948028f289a0b53678ee"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#a7e0d04fa7ef3948028f289a0b53678ee">startSingleMeasurement</a> (void)</td></tr>
+<tr class="separator:a7e0d04fa7ef3948028f289a0b53678ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e1319fd05eaa514e33ad4755a01c1b5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#a2e1319fd05eaa514e33ad4755a01c1b5">setGain</a> (enum mlx90393_gain gain)</td></tr>
 <tr class="separator:a2e1319fd05eaa514e33ad4755a01c1b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1946153995e03566a70a965e2a82bfad"><td class="memItemLeft" align="right" valign="top">enum mlx90393_gain&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#a1946153995e03566a70a965e2a82bfad">getGain</a> (void)</td></tr>
+<tr class="separator:a1946153995e03566a70a965e2a82bfad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb8bf5493776fa58fd6e4e604d233df5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#adb8bf5493776fa58fd6e4e604d233df5">setTrigInt</a> (bool state)</td></tr>
 <tr class="separator:adb8bf5493776fa58fd6e4e604d233df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3fce39e21bb131e6c0ee1ba5a69b5f2"><td class="memItemLeft" align="right" valign="top">enum mlx90393_gain&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#ab3fce39e21bb131e6c0ee1ba5a69b5f2">getGain</a> (void)</td></tr>
-<tr class="separator:ab3fce39e21bb131e6c0ee1ba5a69b5f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d06509810afabf30455282196234178"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#a4d06509810afabf30455282196234178">readData</a> (float *x, float *y, float *z)</td></tr>
 <tr class="separator:a4d06509810afabf30455282196234178"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
-Protected Attributes</h2></td></tr>
-<tr class="memitem:ad530e85c962da1a0ce7a510d04b5f1a8"><td class="memItemLeft" align="right" valign="top">Adafruit_I2CDevice *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#ad530e85c962da1a0ce7a510d04b5f1a8">i2c_dev</a></td></tr>
-<tr class="separator:ad530e85c962da1a0ce7a510d04b5f1a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af1a1c40a8289e7269fcf4cc6bb446afe"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#af1a1c40a8289e7269fcf4cc6bb446afe">getEvent</a> (sensors_event_t *event)</td></tr>
+<tr class="memdesc:af1a1c40a8289e7269fcf4cc6bb446afe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the most recent sensor event, Adafruit Unified Sensor format.  <a href="#af1a1c40a8289e7269fcf4cc6bb446afe">More...</a><br /></td></tr>
+<tr class="separator:af1a1c40a8289e7269fcf4cc6bb446afe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e2fe029c7a6551732412e705a975ae5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#a7e2fe029c7a6551732412e705a975ae5">getSensor</a> (sensor_t *sensor)</td></tr>
+<tr class="memdesc:a7e2fe029c7a6551732412e705a975ae5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the sensor_t device data, Adafruit Unified Sensor format.  <a href="#a7e2fe029c7a6551732412e705a975ae5">More...</a><br /></td></tr>
+<tr class="separator:a7e2fe029c7a6551732412e705a975ae5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Driver for the Adafruit SHT31-D Temperature and Humidity breakout board. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a67ed9a2ac3da9d0c35bfd269486f112e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a67ed9a2ac3da9d0c35bfd269486f112e">&#9670;&nbsp;</a></span>Adafruit_MLX90393()</h2>
+<a id="a4228b354912d3991939e08e75f8246b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4228b354912d3991939e08e75f8246b6">&#9670;&nbsp;</a></span>Adafruit_MLX90393()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -101,46 +118,154 @@ Protected Attributes</h2></td></tr>
         <tr>
           <td class="memname">Adafruit_MLX90393::Adafruit_MLX90393 </td>
           <td>(</td>
-          <td class="paramtype">TwoWire *&#160;</td>
-          <td class="paramname"><em>wireBus</em> = <code>&amp;Wire</code></td><td>)</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Instantiates a new <a class="el" href="class_adafruit___m_l_x90393.html">Adafruit_MLX90393</a> class instance using I2C.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">wireBus</td><td>TwoWire instance to use for I2C communication. </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Instantiates a new <a class="el" href="class_adafruit___m_l_x90393.html">Adafruit_MLX90393</a> class instance using I2C. </p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a9720584f1cbc4bae3f690bac78214319"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9720584f1cbc4bae3f690bac78214319">&#9670;&nbsp;</a></span>begin()</h2>
+<a id="a720cc5c8e2403f1d38c0ffdbb2e430ca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a720cc5c8e2403f1d38c0ffdbb2e430ca">&#9670;&nbsp;</a></span>begin_I2C()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool Adafruit_MLX90393::begin </td>
+          <td class="memname">bool Adafruit_MLX90393::begin_I2C </td>
           <td>(</td>
           <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>i2caddr</em> = <code>MLX90393_DEFAULT_ADDR</code></td><td>)</td>
+          <td class="paramname"><em>i2c_addr</em> = <code>MLX90393_DEFAULT_ADDR</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">TwoWire *&#160;</td>
+          <td class="paramname"><em>wire</em> = <code>&amp;Wire</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets up the hardware and initializes I2C. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">i2c_addr</td><td>The I2C address to be used. </td></tr>
+    <tr><td class="paramname">wire</td><td>The Wire object to be used for I2C connections. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if initialization was successful, otherwise false. </dd></dl>
+
+</div>
+</div>
+<a id="a36fd5463190327d8c6afae8b977b6de6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36fd5463190327d8c6afae8b977b6de6">&#9670;&nbsp;</a></span>reset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Adafruit_MLX90393::reset </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Initialises the I2C bus, and assigns the I2C address to us.</p>
+<p>Perform a soft reset </p><dl class="section return"><dt>Returns</dt><dd>True if the operation succeeded, otherwise false. </dd></dl>
+
+</div>
+</div>
+<a id="af004b3fcdc072b01e9698241a118c745"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af004b3fcdc072b01e9698241a118c745">&#9670;&nbsp;</a></span>exitMode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Adafruit_MLX90393::exitMode </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Perform a mode exit </p><dl class="section return"><dt>Returns</dt><dd>True if the operation succeeded, otherwise false. </dd></dl>
+
+</div>
+</div>
+<a id="a08fd174e70728dfb2de9521e506dec09"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a08fd174e70728dfb2de9521e506dec09">&#9670;&nbsp;</a></span>readMeasurement()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Adafruit_MLX90393::readMeasurement </td>
+          <td>(</td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>y</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>z</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Reads data from data register &amp; returns the results.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">i2caddr</td><td>The I2C address to use for the sensor.</td></tr>
+    <tr><td class="paramname">x</td><td>Pointer to where the 'x' value should be stored. </td></tr>
+    <tr><td class="paramname">y</td><td>Pointer to where the 'y' value should be stored. </td></tr>
+    <tr><td class="paramname">z</td><td>Pointer to where the 'z' value should be stored.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>True if initialisation was successful, otherwise False. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>True if the operation succeeded, otherwise false. </dd></dl>
+
+</div>
+</div>
+<a id="a7e0d04fa7ef3948028f289a0b53678ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e0d04fa7ef3948028f289a0b53678ee">&#9670;&nbsp;</a></span>startSingleMeasurement()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Adafruit_MLX90393::startSingleMeasurement </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Begin a single measurement on all axes</p>
+<dl class="section return"><dt>Returns</dt><dd>True on command success </dd></dl>
 
 </div>
 </div>
@@ -159,14 +284,33 @@ Protected Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Sets the sensor gain to the specified level.</p>
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Sets the sensor gain to the specified level. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">gain</td><td>The gain level to set.</td></tr>
+    <tr><td class="paramname">gain</td><td>The gain level to set. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the operation succeeded, otherwise false. </dd></dl>
+
+</div>
+</div>
+<a id="a1946153995e03566a70a965e2a82bfad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1946153995e03566a70a965e2a82bfad">&#9670;&nbsp;</a></span>getGain()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">mlx90393_gain_t Adafruit_MLX90393::getGain </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Gets the current sensor gain.</p>
+<dl class="section return"><dt>Returns</dt><dd>An enum containing the current gain level. </dd></dl>
 
 </div>
 </div>
@@ -193,26 +337,6 @@ Protected Attributes</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the operation succeeded, otherwise false. </dd></dl>
-
-</div>
-</div>
-<a id="ab3fce39e21bb131e6c0ee1ba5a69b5f2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3fce39e21bb131e6c0ee1ba5a69b5f2">&#9670;&nbsp;</a></span>getGain()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum mlx90393_gain Adafruit_MLX90393::getGain </td>
-          <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Gets the current sensor gain.</p>
-<dl class="section return"><dt>Returns</dt><dd>An enum containing the current gain level. </dd></dl>
 
 </div>
 </div>
@@ -260,27 +384,56 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="ad530e85c962da1a0ce7a510d04b5f1a8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad530e85c962da1a0ce7a510d04b5f1a8">&#9670;&nbsp;</a></span>i2c_dev</h2>
+<a id="af1a1c40a8289e7269fcf4cc6bb446afe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af1a1c40a8289e7269fcf4cc6bb446afe">&#9670;&nbsp;</a></span>getEvent()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Adafruit_I2CDevice* Adafruit_MLX90393::i2c_dev</td>
+          <td class="memname">bool Adafruit_MLX90393::getEvent </td>
+          <td>(</td>
+          <td class="paramtype">sensors_event_t *&#160;</td>
+          <td class="paramname"><em>event</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
-<p>I2CDevice for bus management. </p>
+
+<p>Gets the most recent sensor event, Adafruit Unified Sensor format. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event</td><td>Pointer to an Adafruit Unified sensor_event_t object that we'll fill in </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True on successful read </dd></dl>
+
+</div>
+</div>
+<a id="a7e2fe029c7a6551732412e705a975ae5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e2fe029c7a6551732412e705a975ae5">&#9670;&nbsp;</a></span>getSensor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Adafruit_MLX90393::getSensor </td>
+          <td>(</td>
+          <td class="paramtype">sensor_t *&#160;</td>
+          <td class="paramname"><em>sensor</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets the sensor_t device data, Adafruit Unified Sensor format. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">sensor</td><td>Pointer to an Adafruit Unified sensor_t object that we'll fill in </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
