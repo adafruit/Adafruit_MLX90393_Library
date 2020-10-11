@@ -70,31 +70,6 @@ boolean Adafruit_MLX90393::begin_SPI(uint8_t cs_pin, SPIClass *theSPI) {
   return _init();
 }
 
-/*!
- *    @brief  Sets up the hardware and initializes software SPI
- *    @param  cs_pin The arduino pin # connected to chip select
- *    @param  sck_pin The arduino pin # connected to SPI clock
- *    @param  miso_pin The arduino pin # connected to SPI MISO
- *    @param  mosi_pin The arduino pin # connected to SPI MOSI
- *    @return True if initialization was successful, otherwise false.
- */
-bool Adafruit_MLX90393::begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin,
-                                 int8_t mosi_pin) {
-  i2c_dev = NULL;
-  if (!spi_dev) {
-    _cspin = cs_pin;
-
-    spi_dev = new Adafruit_SPIDevice(cs_pin, sck_pin, miso_pin, mosi_pin,
-                                     1000000,               // frequency
-                                     SPI_BITORDER_MSBFIRST, // bit order
-                                     SPI_MODE3);            // data mode
-  }
-  if (!spi_dev->begin()) {
-    return false;
-  }
-  return _init();
-}
-
 
 bool Adafruit_MLX90393::_init(void) {
 
@@ -208,10 +183,11 @@ bool Adafruit_MLX90393::startSingleMeasurement(void) {
   uint8_t tx[1] = {MLX90393_REG_SM | MLX90393_AXIS_ALL};
 
   /* Set the device to single measurement mode */
-  if (transceive(tx, sizeof(tx)) != MLX90393_STATUS_OK) {
-    return false;
+  uint8_t stat = transceive(tx, sizeof(tx));
+  if ((stat == MLX90393_STATUS_OK) || (stat == MLX90393_STATUS_SMMODE)) {
+    return true;
   }
-  return true;
+  return false;
 }
 
 /**
@@ -221,7 +197,7 @@ bool Adafruit_MLX90393::startSingleMeasurement(void) {
  * @param y     Pointer to where the 'y' value should be stored.
  * @param z     Pointer to where the 'z' value should be stored.
  *
- * @return True if the operation succeeded, otherwise false.
+
  */
 bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
   uint8_t tx[1] = {MLX90393_REG_RM | MLX90393_AXIS_ALL};
@@ -258,7 +234,7 @@ bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
 bool Adafruit_MLX90393::readData(float *x, float *y, float *z) {
   if (!startSingleMeasurement())
     return false;
-
+  delay(10);
   return readMeasurement(x, y, z);
 }
 
@@ -320,7 +296,7 @@ bool Adafruit_MLX90393::getEvent(sensors_event_t *event) {
  *
  * @return The status byte from the IC.
  */
-bool Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
+uint8_t Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
                                    uint8_t *rxbuf, uint8_t rxlen,
                                    uint8_t interdelay) {
   uint8_t status = 0;
@@ -346,45 +322,44 @@ bool Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
 
 
   if (spi_dev) {
+    /*
     spi_dev->write_then_read(txbuf, txlen, rxbuf2, rxlen+1, 0x00);
     status = rxbuf2[0];
     for (i = 0; i < rxlen; i++) {
       rxbuf[i] = rxbuf2[i + 1];
     }
+    */
 
-    /*
     spi_dev->beginTransaction();
     digitalWrite(_cspin, LOW);
 
-
-    Serial.print("SPI Write: ");
+    //Serial.print("SPI Write: ");
     for (size_t i = 0; i < txlen; i++) {
-      Serial.print(F("0x"));
-      Serial.print(txbuf[i], HEX);
-      Serial.print(F(", "));
+      //Serial.print(F("0x"));
+      //Serial.print(txbuf[i], HEX);
+      //Serial.print(F(", "));
 
       spi_dev->transfer(txbuf[i]);
     }
-    Serial.println();
+    // Serial.println();
 
-    delay(interdelay);
+   // delay(interdelay);
 
     status = spi_dev->transfer(0x0);
-    Serial.print("SPI status: 0x");
-    Serial.println(status, HEX);
+    //Serial.print("SPI status: 0x");
+    //Serial.println(status, HEX);
 
     // do the reading
-    Serial.print("SPI Read: ");
+    //Serial.print("SPI Read: ");
     for (size_t i = 0; i < rxlen; i++) {
       rxbuf[i] = spi_dev->transfer(0x0);
-      Serial.print(F("0x"));
-      Serial.print(rxbuf[i], HEX);
-      Serial.print(F(", "));
+      //Serial.print(F("0x"));
+      //Serial.print(rxbuf[i], HEX);
+      //Serial.print(F(", "));
     }
-    Serial.println();
+    //Serial.println();
     digitalWrite(_cspin, HIGH);
     spi_dev->endTransaction();
-    */
 
   }
 

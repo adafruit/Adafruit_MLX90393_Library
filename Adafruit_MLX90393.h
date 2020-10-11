@@ -34,6 +34,7 @@
 #define MLX90393_RES_2_15 (0x00)     /**< Resolution (2^15). */
 #define MLX90393_HALL_CONF (0x0C)    /**< Hall plate spinning rate adj. */
 #define MLX90393_STATUS_OK (0x00)    /**< OK value for status response. */
+#define MLX90393_STATUS_SMMODE (0x08)    /**< SM Mode status response. */
 #define MLX90393_STATUS_RESET (0x01) /**< Reset value for status response. */
 #define MLX90393_STATUS_ERROR (0xFF) /**< OK value for status response. */
 #define MLX90393_STATUS_MASK (0xFC)  /**< Mask for status OK checks. */
@@ -145,7 +146,7 @@ private:
   bool readRegister(uint8_t reg, uint16_t *data);
   bool writeRegister(uint8_t reg, uint16_t data);
 
-  bool transceive(uint8_t *txbuf, uint8_t txlen, uint8_t *rxbuf = NULL,
+  uint8_t transceive(uint8_t *txbuf, uint8_t txlen, uint8_t *rxbuf = NULL,
                   uint8_t rxlen = 0, uint8_t interdelay = 10);
 
   int32_t _sensorID = 90393;
