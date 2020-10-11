@@ -1,6 +1,7 @@
 #include "Adafruit_MLX90393.h"
 
 Adafruit_MLX90393 sensor = Adafruit_MLX90393();
+#define MLX90393_CS 10
 
 void setup(void)
 {
@@ -13,12 +14,12 @@ void setup(void)
 
   Serial.println("Starting Adafruit MLX90393 Demo");
 
-  if (sensor.begin_I2C()) {
-    Serial.println("Found a MLX90393 sensor");
-  } else {
+  if (! sensor.begin_I2C()) {          // hardware I2C mode, can pass in address & alt Wire
+  //if (! sensor.begin_SPI(MLX90393_CS)) {  // hardware SPI mode
     Serial.println("No sensor found ... check your wiring?");
     while (1) { delay(10); }
   }
+  Serial.println("Found a MLX90393 sensor");
 
 
   sensor.setGain(MLX90393_GAIN_2_5X);

@@ -47,7 +47,6 @@ bool Adafruit_MLX90393::begin_I2C(uint8_t i2c_addr, TwoWire *wire) {
   return _init();
 }
 
-
 /*!
  *    @brief  Sets up the hardware and initializes hardware SPI
  *    @param  cs_pin The arduino pin # connected to chip select
@@ -70,7 +69,6 @@ boolean Adafruit_MLX90393::begin_SPI(uint8_t cs_pin, SPIClass *theSPI) {
   return _init();
 }
 
-
 bool Adafruit_MLX90393::_init(void) {
 
   if (!exitMode())
@@ -85,7 +83,7 @@ bool Adafruit_MLX90393::_init(void) {
   }
 
   // set INT pin to output interrupt
-  if (! setTrigInt(false)) {
+  if (!setTrigInt(false)) {
     return false;
   }
 
@@ -197,7 +195,7 @@ bool Adafruit_MLX90393::startSingleMeasurement(void) {
  * @param y     Pointer to where the 'y' value should be stored.
  * @param z     Pointer to where the 'z' value should be stored.
  *
-
+ * @return True on command success
  */
 bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
   uint8_t tx[1] = {MLX90393_REG_RM | MLX90393_AXIS_ALL};
@@ -297,8 +295,8 @@ bool Adafruit_MLX90393::getEvent(sensors_event_t *event) {
  * @return The status byte from the IC.
  */
 uint8_t Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
-                                   uint8_t *rxbuf, uint8_t rxlen,
-                                   uint8_t interdelay) {
+                                      uint8_t *rxbuf, uint8_t rxlen,
+                                      uint8_t interdelay) {
   uint8_t status = 0;
   uint8_t i;
   uint8_t rxbuf2[rxlen + 2];
@@ -320,47 +318,13 @@ uint8_t Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
     }
   }
 
-
   if (spi_dev) {
-    /*
-    spi_dev->write_then_read(txbuf, txlen, rxbuf2, rxlen+1, 0x00);
+    spi_dev->write_then_read(txbuf, txlen, rxbuf2, rxlen + 1, 0x00);
     status = rxbuf2[0];
     for (i = 0; i < rxlen; i++) {
       rxbuf[i] = rxbuf2[i + 1];
     }
-    */
-
-    spi_dev->beginTransaction();
-    digitalWrite(_cspin, LOW);
-
-    //Serial.print("SPI Write: ");
-    for (size_t i = 0; i < txlen; i++) {
-      //Serial.print(F("0x"));
-      //Serial.print(txbuf[i], HEX);
-      //Serial.print(F(", "));
-
-      spi_dev->transfer(txbuf[i]);
-    }
-    // Serial.println();
-
-   // delay(interdelay);
-
-    status = spi_dev->transfer(0x0);
-    //Serial.print("SPI status: 0x");
-    //Serial.println(status, HEX);
-
-    // do the reading
-    //Serial.print("SPI Read: ");
-    for (size_t i = 0; i < rxlen; i++) {
-      rxbuf[i] = spi_dev->transfer(0x0);
-      //Serial.print(F("0x"));
-      //Serial.print(rxbuf[i], HEX);
-      //Serial.print(F(", "));
-    }
-    //Serial.println();
-    digitalWrite(_cspin, HIGH);
-    spi_dev->endTransaction();
-
+    delay(interdelay);
   }
 
   /* Mask out bytes available in the status response. */

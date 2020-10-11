@@ -25,19 +25,19 @@
 
 #define MLX90393_DEFAULT_ADDR (0x0C) /* Can also be 0x18, depending on IC */
 
-#define MLX90393_AXIS_ALL (0x0E)     /**< X+Y+Z axis bits for commands. */
-#define MLX90393_CONF1 (0x00)        /**< Gain */
-#define MLX90393_CONF2 (0x01)        /**< Burst, comm mode */
-#define MLX90393_CONF3 (0x02)        /**< Oversampling, filter, res. */
-#define MLX90393_CONF4 (0x03)        /**< Sensitivty drift. */
-#define MLX90393_GAIN_SHIFT (4)      /**< Left-shift for gain bits. */
-#define MLX90393_RES_2_15 (0x00)     /**< Resolution (2^15). */
-#define MLX90393_HALL_CONF (0x0C)    /**< Hall plate spinning rate adj. */
-#define MLX90393_STATUS_OK (0x00)    /**< OK value for status response. */
-#define MLX90393_STATUS_SMMODE (0x08)    /**< SM Mode status response. */
-#define MLX90393_STATUS_RESET (0x01) /**< Reset value for status response. */
-#define MLX90393_STATUS_ERROR (0xFF) /**< OK value for status response. */
-#define MLX90393_STATUS_MASK (0xFC)  /**< Mask for status OK checks. */
+#define MLX90393_AXIS_ALL (0x0E)      /**< X+Y+Z axis bits for commands. */
+#define MLX90393_CONF1 (0x00)         /**< Gain */
+#define MLX90393_CONF2 (0x01)         /**< Burst, comm mode */
+#define MLX90393_CONF3 (0x02)         /**< Oversampling, filter, res. */
+#define MLX90393_CONF4 (0x03)         /**< Sensitivty drift. */
+#define MLX90393_GAIN_SHIFT (4)       /**< Left-shift for gain bits. */
+#define MLX90393_RES_2_15 (0x00)      /**< Resolution (2^15). */
+#define MLX90393_HALL_CONF (0x0C)     /**< Hall plate spinning rate adj. */
+#define MLX90393_STATUS_OK (0x00)     /**< OK value for status response. */
+#define MLX90393_STATUS_SMMODE (0x08) /**< SM Mode status response. */
+#define MLX90393_STATUS_RESET (0x01)  /**< Reset value for status response. */
+#define MLX90393_STATUS_ERROR (0xFF)  /**< OK value for status response. */
+#define MLX90393_STATUS_MASK (0xFC)   /**< Mask for status OK checks. */
 
 /** Register map. */
 enum {
@@ -119,8 +119,6 @@ public:
   bool begin_I2C(uint8_t i2c_addr = MLX90393_DEFAULT_ADDR,
                  TwoWire *wire = &Wire);
   bool begin_SPI(uint8_t cs_pin, SPIClass *theSPI = &SPI);
-  bool begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin,
-                 int8_t mosi_pin);
 
   bool reset(void);
   bool exitMode(void);
@@ -147,7 +145,7 @@ private:
   bool writeRegister(uint8_t reg, uint16_t data);
 
   uint8_t transceive(uint8_t *txbuf, uint8_t txlen, uint8_t *rxbuf = NULL,
-                  uint8_t rxlen = 0, uint8_t interdelay = 10);
+                     uint8_t rxlen = 0, uint8_t interdelay = 10);
 
   int32_t _sensorID = 90393;
   int _cspin;
