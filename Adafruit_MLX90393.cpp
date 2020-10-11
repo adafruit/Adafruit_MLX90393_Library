@@ -19,72 +19,134 @@
 
 /**
  * Instantiates a new Adafruit_MLX90393 class instance using I2C.
- *
- * @param wireBus   TwoWire instance to use for I2C communication.
  */
-Adafruit_MLX90393::Adafruit_MLX90393(TwoWire *wireBus) {
-  /* Set the I2C bus instance */
-  _wire = wireBus;
-  _transport = MLX90393_TRANSPORT_I2C;
-  _initialized = false;
-  _gain = MLX90393_GAIN_1X;
-  _i2caddr = 0;
+Adafruit_MLX90393::Adafruit_MLX90393(void) {}
+
+/*!
+ *    @brief  Sets up the hardware and initializes I2C
+ *    @param  i2c_addr
+ *            The I2C address to be used.
+ *    @param  wire
+ *            The Wire object to be used for I2C connections.
+ *    @return True if initialization was successful, otherwise false.
+ */
+bool Adafruit_MLX90393::begin_I2C(uint8_t i2c_addr, TwoWire *wire) {
+  if (i2c_dev) {
+    delete i2c_dev;
+  }
+
+  if (!i2c_dev) {
+    i2c_dev = new Adafruit_I2CDevice(i2c_addr, wire);
+  }
+  spi_dev = NULL;
+
+  if (!i2c_dev->begin()) {
+    return false;
+  }
+
+  return _init();
+}
+
+/*!
+ *    @brief  Sets up the hardware and initializes hardware SPI
+ *    @param  cs_pin The arduino pin # connected to chip select
+ *    @param  theSPI The SPI object to be used for SPI connections.
+ *    @return True if initialization was successful, otherwise false.
+ */
+boolean Adafruit_MLX90393::begin_SPI(uint8_t cs_pin, SPIClass *theSPI) {
+  i2c_dev = NULL;
+  if (!spi_dev) {
+    _cspin = cs_pin;
+    spi_dev = new Adafruit_SPIDevice(cs_pin,
+                                     1000000,               // frequency
+                                     SPI_BITORDER_MSBFIRST, // bit order
+                                     SPI_MODE3,             // data mode
+                                     theSPI);
+  }
+  if (!spi_dev->begin()) {
+    return false;
+  }
+  return _init();
+}
+
+bool Adafruit_MLX90393::_init(void) {
+
+  if (!exitMode())
+    return false;
+
+  if (!reset())
+    return false;
+
+  /* Set gain and sensor config. */
+  if (!setGain(MLX90393_GAIN_1X)) {
+    return false;
+  }
+
+  // set INT pin to output interrupt
+  if (!setTrigInt(false)) {
+    return false;
+  }
+
+  return true;
 }
 
 /**
- * Initialises the I2C bus, and assigns the I2C address to us.
- *
- * @param i2caddr   The I2C address to use for the sensor.
- *
- * @return True if initialisation was successful, otherwise False.
+ * Perform a mode exit
+ * @return True if the operation succeeded, otherwise false.
  */
-bool Adafruit_MLX90393::begin(uint8_t i2caddr) {
-  bool ok;
+bool Adafruit_MLX90393::exitMode(void) {
+  uint8_t tx[1] = {MLX90393_REG_EX};
 
-  switch (_transport) {
-  case MLX90393_TRANSPORT_I2C:
-    _wire->begin();
-    _i2caddr = i2caddr;
-    i2c_dev = new Adafruit_I2CDevice(_i2caddr, _wire);
-    i2c_dev->begin();
-    break;
-  case MLX90393_TRANSPORT_SPI:
-    /* Currently not handled due to HW layout. */
-    break;
+  /* Perform the transaction. */
+  return (transceive(tx, sizeof(tx), NULL, 0, 0) == MLX90393_STATUS_OK);
+}
+
+/**
+ * Perform a soft reset
+ * @return True if the operation succeeded, otherwise false.
+ */
+bool Adafruit_MLX90393::reset(void) {
+  uint8_t tx[1] = {MLX90393_REG_RT};
+
+  /* Perform the transaction. */
+  if (transceive(tx, sizeof(tx), NULL, 0, 5) != MLX90393_STATUS_RESET) {
+    return false;
   }
-
-  /* Set gain and sensor config. */
-  ok = setGain(_gain);
-
-  /* Set the initialised flag based on the I2C response. */
-  _initialized = ok;
-
-  return ok;
+  return true;
 }
 
 /**
  * Sets the sensor gain to the specified level.
- *
  * @param gain  The gain level to set.
- *
  * @return True if the operation succeeded, otherwise false.
  */
-bool Adafruit_MLX90393::setGain(enum mlx90393_gain gain) {
-  bool ok;
-
+bool Adafruit_MLX90393::setGain(mlx90393_gain_t gain) {
   _gain = gain;
 
-  /* Set CONF1, including gain. */
-  uint8_t tx[4] = {
-      MLX90393_REG_WR, 0x00,
-      (uint8_t)(((_gain & 0x7) << MLX90393_GAIN_SHIFT) | MLX90393_HALL_CONF),
-      (MLX90393_CONF1 & 0x3F) << 2};
+  uint16_t data;
+  readRegister(MLX90393_CONF1, &data);
 
-  /* Perform the transaction. */
-  ok = transceive(tx, sizeof tx, NULL, 0);
+  // mask off gain bits
+  data &= ~0x0070;
+  // set gain bits
+  data |= gain << MLX90393_GAIN_SHIFT;
 
-  /* Check status byte for errors. */
-  return ok;
+  return writeRegister(MLX90393_CONF1, data);
+}
+
+/**
+ * Gets the current sensor gain.
+ *
+ * @return An enum containing the current gain level.
+ */
+mlx90393_gain_t Adafruit_MLX90393::getGain(void) {
+  uint16_t data;
+  readRegister(MLX90393_CONF1, &data);
+
+  // mask off gain bits
+  data &= 0x0070;
+
+  return (mlx90393_gain_t)(data >> 4);
 }
 
 /**
@@ -95,36 +157,68 @@ bool Adafruit_MLX90393::setGain(enum mlx90393_gain gain) {
  * @return True if the operation succeeded, otherwise false.
  */
 bool Adafruit_MLX90393::setTrigInt(bool state) {
-  bool ok;
-  uint8_t trig_int = 0;
+  uint16_t data;
+  readRegister(MLX90393_CONF2, &data);
 
+  // mask off trigint bit
+  data &= ~0x8000;
+
+  // set trigint bit if desired
   if (state) {
-    /* Set the INT (bit 8 = 1). */
-    trig_int = 0x80;
+    /* Set the INT, highest bit */
+    data |= 0x8000;
   }
 
-  /* Set CONF2 bit 15 to 'state' */
-  uint8_t tx[4] = {MLX90393_REG_WR, 0x00, /* Lower 8 bits */
-                   trig_int,              /* Upper 8 bits */
-                   (MLX90393_CONF2 & 0x3f) << 2};
-  if (state) {
-    /* Set TRIG_INT to INT, from default value of TRIG. */
-    tx[1] = 0x80;
-  };
-
-  /* Perform the transaction. */
-  ok = transceive(tx, sizeof tx, NULL, 0);
-
-  /* Check status byte for errors. */
-  return ok;
+  return writeRegister(MLX90393_CONF2, data);
 }
 
 /**
- * Gets the current sensor gain.
+ * Begin a single measurement on all axes
  *
- * @return An enum containing the current gain level.
+ * @return True on command success
  */
-enum mlx90393_gain Adafruit_MLX90393::getGain(void) { return _gain; }
+bool Adafruit_MLX90393::startSingleMeasurement(void) {
+  uint8_t tx[1] = {MLX90393_REG_SM | MLX90393_AXIS_ALL};
+
+  /* Set the device to single measurement mode */
+  uint8_t stat = transceive(tx, sizeof(tx));
+  if ((stat == MLX90393_STATUS_OK) || (stat == MLX90393_STATUS_SMMODE)) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Reads data from data register & returns the results.
+ *
+ * @param x     Pointer to where the 'x' value should be stored.
+ * @param y     Pointer to where the 'y' value should be stored.
+ * @param z     Pointer to where the 'z' value should be stored.
+ *
+ * @return True on command success
+ */
+bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
+  uint8_t tx[1] = {MLX90393_REG_RM | MLX90393_AXIS_ALL};
+  uint8_t rx[6] = {0};
+
+  /* Read a single data sample. */
+  if (transceive(tx, sizeof(tx), rx, sizeof(rx), 0) != MLX90393_STATUS_OK) {
+    return false;
+  }
+
+  int16_t xi, yi, zi;
+
+  /* Convert data to uT and float. */
+  xi = (rx[0] << 8) | rx[1];
+  yi = (rx[2] << 8) | rx[3];
+  zi = (rx[4] << 8) | rx[5];
+
+  *x = (float)xi * mlx90393_lsb_lookup[0][_gain][0][0];
+  *y = (float)yi * mlx90393_lsb_lookup[0][_gain][0][0];
+  *z = (float)zi * mlx90393_lsb_lookup[0][_gain][0][1];
+
+  return true;
+}
 
 /**
  * Performs a single X/Y/Z conversion and returns the results.
@@ -136,34 +230,56 @@ enum mlx90393_gain Adafruit_MLX90393::getGain(void) { return _gain; }
  * @return True if the operation succeeded, otherwise false.
  */
 bool Adafruit_MLX90393::readData(float *x, float *y, float *z) {
-  bool ok;
-  uint8_t tx_mode[1] = {MLX90393_REG_SM | MLX90393_AXIS_ALL};
-  uint8_t tx[1] = {MLX90393_REG_RM | MLX90393_AXIS_ALL};
-  uint8_t rx[6] = {0};
-  int16_t xi, yi, zi;
+  if (!startSingleMeasurement())
+    return false;
+  delay(10);
+  return readMeasurement(x, y, z);
+}
 
-  /* Set the device to single measurement mode */
-  ok = transceive(tx_mode, sizeof tx_mode, NULL, 0);
-  if (!ok) {
+bool Adafruit_MLX90393::writeRegister(uint8_t reg, uint16_t data) {
+  uint8_t tx[4] = {MLX90393_REG_WR,
+                   data >> 8,   // high byte
+                   data & 0xFF, // low byte
+                   reg << 2};   // the register itself, shift up by 2 bits!
+
+  /* Perform the transaction. */
+  return (transceive(tx, sizeof(tx), NULL, 0, 0) == MLX90393_STATUS_OK);
+}
+
+bool Adafruit_MLX90393::readRegister(uint8_t reg, uint16_t *data) {
+  uint8_t tx[2] = {MLX90393_REG_RR,
+                   reg << 2}; // the register itself, shift up by 2 bits!
+
+  uint8_t rx[2];
+
+  /* Perform the transaction. */
+  if (transceive(tx, sizeof(tx), rx, sizeof(rx), 0) != MLX90393_STATUS_OK) {
     return false;
   }
 
-  /* Read a single data sample. */
-  ok = transceive(tx, sizeof tx, rx, sizeof rx);
-  if (!ok) {
-    return false;
-  }
+  *data = ((uint16_t)rx[0] << 8) | rx[1];
 
-  /* Convert data to uT and float. */
-  xi = (rx[0] << 8) | rx[1];
-  yi = (rx[2] << 8) | rx[3];
-  zi = (rx[4] << 8) | rx[5];
+  return true;
+}
 
-  *x = (float)xi * mlx90393_lsb_lookup[0][_gain][0][0];
-  *y = (float)yi * mlx90393_lsb_lookup[0][_gain][0][0];
-  *z = (float)zi * mlx90393_lsb_lookup[0][_gain][0][1];
+/**************************************************************************/
+/*!
+    @brief  Gets the most recent sensor event, Adafruit Unified Sensor format
+    @param  event Pointer to an Adafruit Unified sensor_event_t object that
+   we'll fill in
+    @returns True on successful read
+*/
+/**************************************************************************/
+bool Adafruit_MLX90393::getEvent(sensors_event_t *event) {
+  /* Clear the event */
+  memset(event, 0, sizeof(sensors_event_t));
 
-  return ok;
+  event->version = 1;
+  event->sensor_id = _sensorID;
+  event->type = SENSOR_TYPE_MAGNETIC_FIELD;
+  event->timestamp = millis();
+
+  return readData(&event->magnetic.x, &event->magnetic.y, &event->magnetic.z);
 }
 
 /**
@@ -178,38 +294,62 @@ bool Adafruit_MLX90393::readData(float *x, float *y, float *z) {
  *
  * @return The status byte from the IC.
  */
-bool Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
-                                   uint8_t *rxbuf, uint8_t rxlen) {
+uint8_t Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
+                                      uint8_t *rxbuf, uint8_t rxlen,
+                                      uint8_t interdelay) {
   uint8_t status = 0;
   uint8_t i;
-  uint8_t rxbuf2[rxlen + 1];
+  uint8_t rxbuf2[rxlen + 2];
 
-  /* Write stage */
-  switch (_transport) {
-  case MLX90393_TRANSPORT_I2C:
-    i2c_dev->write(txbuf, txlen);
-    /* Wait a bit befoore requesting a response. */
-    delay(10);
-    break;
-  case MLX90393_TRANSPORT_SPI:
-    /* Currently not handled due to HW layout. */
-    break;
+  if (i2c_dev) {
+    /* Write stage */
+    if (!i2c_dev->write(txbuf, txlen)) {
+      return MLX90393_STATUS_ERROR;
+    }
+    delay(interdelay);
+
+    /* Read status byte plus any others */
+    if (!i2c_dev->read(rxbuf2, rxlen + 1)) {
+      return MLX90393_STATUS_ERROR;
+    }
+    status = rxbuf2[0];
+    for (i = 0; i < rxlen; i++) {
+      rxbuf[i] = rxbuf2[i + 1];
+    }
   }
 
-  /* Read stage. */
-  switch (_transport) {
-  case MLX90393_TRANSPORT_I2C:
-    /* Read status byte plus any others */
-    i2c_dev->read(rxbuf2, rxlen + 1);
+  if (spi_dev) {
+    spi_dev->write_then_read(txbuf, txlen, rxbuf2, rxlen + 1, 0x00);
     status = rxbuf2[0];
-    for (i = 0; i < rxlen; i++)
+    for (i = 0; i < rxlen; i++) {
       rxbuf[i] = rxbuf2[i + 1];
-    break;
-  case MLX90393_TRANSPORT_SPI:
-    /* Currently not handled due to HW layout. */
-    break;
+    }
+    delay(interdelay);
   }
 
   /* Mask out bytes available in the status response. */
-  return ((status >> 2) == 0 ? true : false);
+  return (status >> 2);
+}
+
+/**************************************************************************/
+/*!
+    @brief  Gets the sensor_t device data, Adafruit Unified Sensor format
+    @param  sensor Pointer to an Adafruit Unified sensor_t object that we'll
+   fill in
+*/
+/**************************************************************************/
+void Adafruit_MLX90393::getSensor(sensor_t *sensor) {
+  /* Clear the sensor_t object */
+  memset(sensor, 0, sizeof(sensor_t));
+
+  /* Insert the sensor name in the fixed length char array */
+  strncpy(sensor->name, "MLX90393", sizeof(sensor->name) - 1);
+  sensor->name[sizeof(sensor->name) - 1] = 0;
+  sensor->version = 1;
+  sensor->sensor_id = _sensorID;
+  sensor->type = SENSOR_TYPE_MAGNETIC_FIELD;
+  sensor->min_delay = 0;
+  sensor->min_value = -50000; // -50 gauss in uTesla
+  sensor->max_value = 50000;  // +50 gauss in uTesla
+  sensor->resolution = 0.15;  // 100/16-bit uTesla per LSB
 }
