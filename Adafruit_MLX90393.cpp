@@ -18,7 +18,7 @@
 #include "Adafruit_MLX90393.h"
 
 /**
- * Instantiates a new Adafruit_MLX90393 class instance using I2C.
+ * Instantiates a new Adafruit_MLX90393 class instance
  */
 Adafruit_MLX90393::Adafruit_MLX90393(void) {}
 

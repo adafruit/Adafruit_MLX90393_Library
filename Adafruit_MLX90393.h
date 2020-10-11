@@ -111,7 +111,7 @@ const float mlx90393_lsb_lookup[2][8][4][2] = {
     }};
 
 /**
- * Driver for the Adafruit SHT31-D Temperature and Humidity breakout board.
+ * Driver for the Adafruit MLX90393 magnetometer breakout board.
  */
 class Adafruit_MLX90393 : public Adafruit_Sensor {
 public:
