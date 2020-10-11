@@ -117,6 +117,10 @@ public:
   Adafruit_MLX90393();
   bool begin_I2C(uint8_t i2c_addr = MLX90393_DEFAULT_ADDR,
                  TwoWire *wire = &Wire);
+  bool begin_SPI(uint8_t cs_pin, SPIClass *theSPI = &SPI);
+  bool begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin,
+                 int8_t mosi_pin);
+
   bool reset(void);
   bool exitMode(void);
 
@@ -145,6 +149,7 @@ private:
                   uint8_t rxlen = 0, uint8_t interdelay = 10);
 
   int32_t _sensorID = 90393;
+  int _cspin;
 };
 
 #endif /* ADAFRUIT_MLX90393_H */

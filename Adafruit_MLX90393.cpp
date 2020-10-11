@@ -47,6 +47,55 @@ bool Adafruit_MLX90393::begin_I2C(uint8_t i2c_addr, TwoWire *wire) {
   return _init();
 }
 
+
+/*!
+ *    @brief  Sets up the hardware and initializes hardware SPI
+ *    @param  cs_pin The arduino pin # connected to chip select
+ *    @param  theSPI The SPI object to be used for SPI connections.
+ *    @return True if initialization was successful, otherwise false.
+ */
+boolean Adafruit_MLX90393::begin_SPI(uint8_t cs_pin, SPIClass *theSPI) {
+  i2c_dev = NULL;
+  if (!spi_dev) {
+    _cspin = cs_pin;
+    spi_dev = new Adafruit_SPIDevice(cs_pin,
+                                     1000000,               // frequency
+                                     SPI_BITORDER_MSBFIRST, // bit order
+                                     SPI_MODE3,             // data mode
+                                     theSPI);
+  }
+  if (!spi_dev->begin()) {
+    return false;
+  }
+  return _init();
+}
+
+/*!
+ *    @brief  Sets up the hardware and initializes software SPI
+ *    @param  cs_pin The arduino pin # connected to chip select
+ *    @param  sck_pin The arduino pin # connected to SPI clock
+ *    @param  miso_pin The arduino pin # connected to SPI MISO
+ *    @param  mosi_pin The arduino pin # connected to SPI MOSI
+ *    @return True if initialization was successful, otherwise false.
+ */
+bool Adafruit_MLX90393::begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin,
+                                 int8_t mosi_pin) {
+  i2c_dev = NULL;
+  if (!spi_dev) {
+    _cspin = cs_pin;
+
+    spi_dev = new Adafruit_SPIDevice(cs_pin, sck_pin, miso_pin, mosi_pin,
+                                     1000000,               // frequency
+                                     SPI_BITORDER_MSBFIRST, // bit order
+                                     SPI_MODE3);            // data mode
+  }
+  if (!spi_dev->begin()) {
+    return false;
+  }
+  return _init();
+}
+
+
 bool Adafruit_MLX90393::_init(void) {
 
   if (!exitMode())
@@ -59,6 +108,12 @@ bool Adafruit_MLX90393::_init(void) {
   if (!setGain(MLX90393_GAIN_1X)) {
     return false;
   }
+
+  // set INT pin to output interrupt
+  if (! setTrigInt(false)) {
+    return false;
+  }
+
   return true;
 }
 
@@ -129,21 +184,19 @@ mlx90393_gain_t Adafruit_MLX90393::getGain(void) {
  * @return True if the operation succeeded, otherwise false.
  */
 bool Adafruit_MLX90393::setTrigInt(bool state) {
-  bool ok;
-  uint8_t trig_int = 0;
+  uint16_t data;
+  readRegister(MLX90393_CONF2, &data);
 
+  // mask off trigint bit
+  data &= ~0x8000;
+
+  // set trigint bit if desired
   if (state) {
-    /* Set the INT (bit 8 = 1). */
-    trig_int = 0x80;
+    /* Set the INT, highest bit */
+    data |= 0x8000;
   }
 
-  /* Set CONF2 bit 15 to 'state' */
-  uint8_t tx[4] = {MLX90393_REG_WR, 0x00, /* Lower 8 bits */
-                   trig_int,              /* Upper 8 bits */
-                   (MLX90393_CONF2 & 0x3f) << 2};
-
-  /* Perform the transaction. */
-  return (transceive(tx, sizeof(tx), NULL, 0, 0) == MLX90393_STATUS_OK);
+  return writeRegister(MLX90393_CONF2, data);
 }
 
 /**
@@ -272,26 +325,67 @@ bool Adafruit_MLX90393::transceive(uint8_t *txbuf, uint8_t txlen,
                                    uint8_t interdelay) {
   uint8_t status = 0;
   uint8_t i;
-  uint8_t rxbuf2[rxlen + 1];
+  uint8_t rxbuf2[rxlen + 2];
 
-  /* Write stage */
   if (i2c_dev) {
+    /* Write stage */
     if (!i2c_dev->write(txbuf, txlen)) {
       return MLX90393_STATUS_ERROR;
     }
-  }
+    delay(interdelay);
 
-  delay(interdelay);
-
-  /* Read stage. */
-  if (i2c_dev) {
     /* Read status byte plus any others */
     if (!i2c_dev->read(rxbuf2, rxlen + 1)) {
       return MLX90393_STATUS_ERROR;
     }
     status = rxbuf2[0];
-    for (i = 0; i < rxlen; i++)
+    for (i = 0; i < rxlen; i++) {
       rxbuf[i] = rxbuf2[i + 1];
+    }
+  }
+
+
+  if (spi_dev) {
+    spi_dev->write_then_read(txbuf, txlen, rxbuf2, rxlen+1, 0x00);
+    status = rxbuf2[0];
+    for (i = 0; i < rxlen; i++) {
+      rxbuf[i] = rxbuf2[i + 1];
+    }
+
+    /*
+    spi_dev->beginTransaction();
+    digitalWrite(_cspin, LOW);
+
+
+    Serial.print("SPI Write: ");
+    for (size_t i = 0; i < txlen; i++) {
+      Serial.print(F("0x"));
+      Serial.print(txbuf[i], HEX);
+      Serial.print(F(", "));
+
+      spi_dev->transfer(txbuf[i]);
+    }
+    Serial.println();
+
+    delay(interdelay);
+
+    status = spi_dev->transfer(0x0);
+    Serial.print("SPI status: 0x");
+    Serial.println(status, HEX);
+
+    // do the reading
+    Serial.print("SPI Read: ");
+    for (size_t i = 0; i < rxlen; i++) {
+      rxbuf[i] = spi_dev->transfer(0x0);
+      Serial.print(F("0x"));
+      Serial.print(rxbuf[i], HEX);
+      Serial.print(F(", "));
+    }
+    Serial.println();
+    digitalWrite(_cspin, HIGH);
+    spi_dev->endTransaction();
+    */
+
   }
 
   /* Mask out bytes available in the status response. */
