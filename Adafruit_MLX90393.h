@@ -20,20 +20,23 @@
 
 #include "Arduino.h"
 #include <Adafruit_I2CDevice.h>
-#include <Wire.h>
+#include <Adafruit_SPIDevice.h>
+#include <Adafruit_Sensor.h>
 
 #define MLX90393_DEFAULT_ADDR (0x0C) /* Can also be 0x18, depending on IC */
 
-#define MLX90393_AXIS_ALL (0x0E)    /**< X+Y+Z axis bits for commands. */
-#define MLX90393_CONF1 (0x00)       /**< Gain */
-#define MLX90393_CONF2 (0x01)       /**< Burst, comm mode */
-#define MLX90393_CONF3 (0x02)       /**< Oversampling, filter, res. */
-#define MLX90393_CONF4 (0x03)       /**< Sensitivty drift. */
-#define MLX90393_GAIN_SHIFT (4)     /**< Left-shift for gain bits. */
-#define MLX90393_RES_2_15 (0x00)    /**< Resolution (2^15). */
-#define MLX90393_HALL_CONF (0x0C)   /**< Hall plate spinning rate adj. */
-#define MLX90393_STATUS_OK (0x00)   /**< OK value for status response. */
-#define MLX90393_STATUS_MASK (0xFC) /**< Mask for status OK checks. */
+#define MLX90393_AXIS_ALL (0x0E)     /**< X+Y+Z axis bits for commands. */
+#define MLX90393_CONF1 (0x00)        /**< Gain */
+#define MLX90393_CONF2 (0x01)        /**< Burst, comm mode */
+#define MLX90393_CONF3 (0x02)        /**< Oversampling, filter, res. */
+#define MLX90393_CONF4 (0x03)        /**< Sensitivty drift. */
+#define MLX90393_GAIN_SHIFT (4)      /**< Left-shift for gain bits. */
+#define MLX90393_RES_2_15 (0x00)     /**< Resolution (2^15). */
+#define MLX90393_HALL_CONF (0x0C)    /**< Hall plate spinning rate adj. */
+#define MLX90393_STATUS_OK (0x00)    /**< OK value for status response. */
+#define MLX90393_STATUS_RESET (0x01) /**< Reset value for status response. */
+#define MLX90393_STATUS_ERROR (0xFF) /**< OK value for status response. */
+#define MLX90393_STATUS_MASK (0xFC)  /**< Mask for status OK checks. */
 
 /** Register map. */
 enum {
@@ -60,12 +63,6 @@ enum mlx90393_gain {
   MLX90393_GAIN_1_67X,
   MLX90393_GAIN_1_33X,
   MLX90393_GAIN_1X
-};
-
-/** Transport options for this sensor. */
-enum mlx90393_transport {
-  MLX90393_TRANSPORT_I2C = (0x00),
-  MLX90393_TRANSPORT_SPI
 };
 
 /** Lookup table to convert raw values to uT based on [HALLCONF][GAIN_SEL][RES].
@@ -115,27 +112,36 @@ const float mlx90393_lsb_lookup[2][8][4][2] = {
 /**
  * Driver for the Adafruit SHT31-D Temperature and Humidity breakout board.
  */
-class Adafruit_MLX90393 {
+class Adafruit_MLX90393 : public Adafruit_Sensor {
 public:
-  Adafruit_MLX90393(TwoWire *wireBus = &Wire);
+  Adafruit_MLX90393();
+  bool begin_I2C(uint8_t i2c_addr = MLX90393_DEFAULT_ADDR,
+                 TwoWire *wire = &Wire);
+  bool reset(void);
+  bool exitMode(void);
 
-  bool begin(uint8_t i2caddr = MLX90393_DEFAULT_ADDR);
+  bool readMeasurement(float *x, float *y, float *z);
+  bool startSingleMeasurement(void);
+
   bool setGain(enum mlx90393_gain gain);
-  bool setTrigInt(bool state);
   enum mlx90393_gain getGain(void);
+
+  bool setTrigInt(bool state);
   bool readData(float *x, float *y, float *z);
 
-protected:
-  Adafruit_I2CDevice *i2c_dev; /**< I2CDevice for bus management. */
+  bool getEvent(sensors_event_t *event);
+  void getSensor(sensor_t *sensor);
 
 private:
-  enum mlx90393_transport _transport;
-  enum mlx90393_gain _gain;
-  TwoWire *_wire;
-  bool _initialized;
-  uint8_t _i2caddr;
+  Adafruit_I2CDevice *i2c_dev = NULL;
+  Adafruit_SPIDevice *spi_dev = NULL;
 
-  bool transceive(uint8_t *txbuf, uint8_t txlen, uint8_t *rxbuf, uint8_t rxlen);
+  bool _init(void);
+  enum mlx90393_gain _gain;
+  bool transceive(uint8_t *txbuf, uint8_t txlen, uint8_t *rxbuf = NULL,
+                  uint8_t rxlen = 0, uint8_t interdelay = 10);
+
+  int32_t _sensorID = 90393;
 };
 
 #endif /* ADAFRUIT_MLX90393_H */
