@@ -98,6 +98,18 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a2e1319fd05eaa514e33ad4755a01c1b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1946153995e03566a70a965e2a82bfad"><td class="memItemLeft" align="right" valign="top">enum mlx90393_gain&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#a1946153995e03566a70a965e2a82bfad">getGain</a> (void)</td></tr>
 <tr class="separator:a1946153995e03566a70a965e2a82bfad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace8f84218fe4b1519a4808eedd925f90"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#ace8f84218fe4b1519a4808eedd925f90">setResolution</a> (enum mlx90393_axis, enum mlx90393_resolution resolution)</td></tr>
+<tr class="separator:ace8f84218fe4b1519a4808eedd925f90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9eb593c18d89cc09a6c226756e4c87a8"><td class="memItemLeft" align="right" valign="top">enum mlx90393_resolution&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#a9eb593c18d89cc09a6c226756e4c87a8">getResolution</a> (enum mlx90393_axis)</td></tr>
+<tr class="separator:a9eb593c18d89cc09a6c226756e4c87a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2eee57b8e331ff1703c2006687ebd59e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#a2eee57b8e331ff1703c2006687ebd59e">setFilter</a> (enum mlx90393_filter filter)</td></tr>
+<tr class="separator:a2eee57b8e331ff1703c2006687ebd59e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6397ee45fa44b481c5cd635c9ac6cc70"><td class="memItemLeft" align="right" valign="top">enum mlx90393_filter&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#a6397ee45fa44b481c5cd635c9ac6cc70">getFilter</a> (void)</td></tr>
+<tr class="separator:a6397ee45fa44b481c5cd635c9ac6cc70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5e4848eaf3fa38d220c4dc10e7d919e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#ab5e4848eaf3fa38d220c4dc10e7d919e">setOversampling</a> (enum mlx90393_oversampling oversampling)</td></tr>
+<tr class="separator:ab5e4848eaf3fa38d220c4dc10e7d919e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2fdc0d1490cfa1f968fe4c18b2ef4dd"><td class="memItemLeft" align="right" valign="top">enum mlx90393_oversampling&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#af2fdc0d1490cfa1f968fe4c18b2ef4dd">getOversampling</a> (void)</td></tr>
+<tr class="separator:af2fdc0d1490cfa1f968fe4c18b2ef4dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb8bf5493776fa58fd6e4e604d233df5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#adb8bf5493776fa58fd6e4e604d233df5">setTrigInt</a> (bool state)</td></tr>
 <tr class="separator:adb8bf5493776fa58fd6e4e604d233df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d06509810afabf30455282196234178"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_l_x90393.html#a4d06509810afabf30455282196234178">readData</a> (float *x, float *y, float *z)</td></tr>
@@ -352,6 +364,155 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Gets the current sensor gain.</p>
 <dl class="section return"><dt>Returns</dt><dd>An enum containing the current gain level. </dd></dl>
+
+</div>
+</div>
+<a id="ace8f84218fe4b1519a4808eedd925f90"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ace8f84218fe4b1519a4808eedd925f90">&#9670;&nbsp;</a></span>setResolution()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Adafruit_MLX90393::setResolution </td>
+          <td>(</td>
+          <td class="paramtype">enum mlx90393_axis&#160;</td>
+          <td class="paramname"><em>axis</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">enum mlx90393_resolution&#160;</td>
+          <td class="paramname"><em>resolution</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Sets the sensor resolution to the specified level. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">axis</td><td>The axis to set. </td></tr>
+    <tr><td class="paramname">resolution</td><td>The resolution level to set. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if the operation succeeded, otherwise false. </dd></dl>
+
+</div>
+</div>
+<a id="a9eb593c18d89cc09a6c226756e4c87a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9eb593c18d89cc09a6c226756e4c87a8">&#9670;&nbsp;</a></span>getResolution()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum mlx90393_resolution Adafruit_MLX90393::getResolution </td>
+          <td>(</td>
+          <td class="paramtype">enum mlx90393_axis&#160;</td>
+          <td class="paramname"><em>axis</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Gets the current sensor resolution. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">axis</td><td>The axis to get. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An enum containing the current resolution. </dd></dl>
+
+</div>
+</div>
+<a id="a2eee57b8e331ff1703c2006687ebd59e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2eee57b8e331ff1703c2006687ebd59e">&#9670;&nbsp;</a></span>setFilter()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Adafruit_MLX90393::setFilter </td>
+          <td>(</td>
+          <td class="paramtype">enum mlx90393_filter&#160;</td>
+          <td class="paramname"><em>filter</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Sets the digital filter. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">filter</td><td>The digital filter setting. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if the operation succeeded, otherwise false. </dd></dl>
+
+</div>
+</div>
+<a id="a6397ee45fa44b481c5cd635c9ac6cc70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6397ee45fa44b481c5cd635c9ac6cc70">&#9670;&nbsp;</a></span>getFilter()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum mlx90393_filter Adafruit_MLX90393::getFilter </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Gets the current digital filter setting. </p><dl class="section return"><dt>Returns</dt><dd>An enum containing the current digital filter setting. </dd></dl>
+
+</div>
+</div>
+<a id="ab5e4848eaf3fa38d220c4dc10e7d919e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5e4848eaf3fa38d220c4dc10e7d919e">&#9670;&nbsp;</a></span>setOversampling()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Adafruit_MLX90393::setOversampling </td>
+          <td>(</td>
+          <td class="paramtype">enum mlx90393_oversampling&#160;</td>
+          <td class="paramname"><em>oversampling</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Sets the oversampling. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">oversampling</td><td>The oversampling value to use. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if the operation succeeded, otherwise false. </dd></dl>
+
+</div>
+</div>
+<a id="af2fdc0d1490cfa1f968fe4c18b2ef4dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2fdc0d1490cfa1f968fe4c18b2ef4dd">&#9670;&nbsp;</a></span>getOversampling()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum mlx90393_oversampling Adafruit_MLX90393::getOversampling </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Gets the current oversampling setting. </p><dl class="section return"><dt>Returns</dt><dd>An enum containing the current oversampling setting. </dd></dl>
 
 </div>
 </div>
