@@ -82,7 +82,23 @@ bool Adafruit_MLX90393::_init(void) {
     return false;
   }
 
-  // set INT pin to output interrupt
+  /* Set resolution. */
+  if (!setResolution(MLX90393_X, MLX90393_RES_16))
+    return false;
+  if (!setResolution(MLX90393_Y, MLX90393_RES_16))
+    return false;
+  if (!setResolution(MLX90393_Z, MLX90393_RES_16))
+    return false;
+
+  /* Set oversampling. */
+  if (!setOversampling(MLX90393_OSR_3))
+    return false;
+
+  /* Set digital filtering. */
+  if (!setFilter(MLX90393_FILTER_7))
+    return false;
+
+  /* set INT pin to output interrupt */
   if (!setTrigInt(false)) {
     return false;
   }
@@ -150,6 +166,105 @@ mlx90393_gain_t Adafruit_MLX90393::getGain(void) {
 }
 
 /**
+ * Sets the sensor resolution to the specified level.
+ * @param axis  The axis to set.
+ * @param resolution  The resolution level to set.
+ * @return True if the operation succeeded, otherwise false.
+ */
+bool Adafruit_MLX90393::setResolution(enum mlx90393_axis axis,
+                                      enum mlx90393_resolution resolution) {
+
+  uint16_t data;
+  readRegister(MLX90393_CONF3, &data);
+
+  switch (axis) {
+  case MLX90393_X:
+    _res_x = resolution;
+    data &= ~0x0060;
+    data |= resolution << 5;
+    break;
+  case MLX90393_Y:
+    _res_y = resolution;
+    data &= ~0x0180;
+    data |= resolution << 7;
+    break;
+  case MLX90393_Z:
+    _res_z = resolution;
+    data &= ~0x0600;
+    data |= resolution << 9;
+    break;
+  }
+
+  return writeRegister(MLX90393_CONF3, data);
+}
+
+/**
+ * Gets the current sensor resolution.
+ * @param axis  The axis to get.
+ * @return An enum containing the current resolution.
+ */
+enum mlx90393_resolution
+Adafruit_MLX90393::getResolution(enum mlx90393_axis axis) {
+  switch (axis) {
+  case MLX90393_X:
+    return _res_x;
+  case MLX90393_Y:
+    return _res_y;
+  case MLX90393_Z:
+    return _res_z;
+  }
+}
+
+/**
+ * Sets the digital filter.
+ * @param filter The digital filter setting.
+ * @return True if the operation succeeded, otherwise false.
+ */
+bool Adafruit_MLX90393::setFilter(enum mlx90393_filter filter) {
+  _dig_filt = filter;
+
+  uint16_t data;
+  readRegister(MLX90393_CONF3, &data);
+
+  data &= ~0x1C;
+  data |= filter << 2;
+
+  return writeRegister(MLX90393_CONF3, data);
+}
+
+/**
+ * Gets the current digital filter setting.
+ * @return An enum containing the current digital filter setting.
+ */
+enum mlx90393_filter Adafruit_MLX90393::getFilter(void) { return _dig_filt; }
+
+/**
+ * Sets the oversampling.
+ * @param oversampling The oversampling value to use.
+ * @return True if the operation succeeded, otherwise false.
+ */
+bool Adafruit_MLX90393::setOversampling(
+    enum mlx90393_oversampling oversampling) {
+  _osr = oversampling;
+
+  uint16_t data;
+  readRegister(MLX90393_CONF3, &data);
+
+  data &= ~0x03;
+  data |= oversampling;
+
+  return writeRegister(MLX90393_CONF3, data);
+}
+
+/**
+ * Gets the current oversampling setting.
+ * @return An enum containing the current oversampling setting.
+ */
+enum mlx90393_oversampling Adafruit_MLX90393::getOversampling(void) {
+  return _osr;
+}
+
+/**
  * Sets the TRIG_INT pin to the specified function.
  *
  * @param state  'true/1' sets the pin to INT, 'false/0' to TRIG.
@@ -213,9 +328,22 @@ bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
   yi = (rx[2] << 8) | rx[3];
   zi = (rx[4] << 8) | rx[5];
 
-  *x = (float)xi * mlx90393_lsb_lookup[0][_gain][0][0];
-  *y = (float)yi * mlx90393_lsb_lookup[0][_gain][0][0];
-  *z = (float)zi * mlx90393_lsb_lookup[0][_gain][0][1];
+  if (_res_x == MLX90393_RES_18)
+    xi -= 0x8000;
+  if (_res_x == MLX90393_RES_19)
+    xi -= 0x4000;
+  if (_res_y == MLX90393_RES_18)
+    yi -= 0x8000;
+  if (_res_y == MLX90393_RES_19)
+    yi -= 0x4000;
+  if (_res_z == MLX90393_RES_18)
+    zi -= 0x8000;
+  if (_res_z == MLX90393_RES_19)
+    zi -= 0x4000;
+
+  *x = (float)xi * mlx90393_lsb_lookup[0][_gain][_res_x][0];
+  *y = (float)yi * mlx90393_lsb_lookup[0][_gain][_res_y][0];
+  *z = (float)zi * mlx90393_lsb_lookup[0][_gain][_res_z][1];
 
   return true;
 }
@@ -232,7 +360,10 @@ bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
 bool Adafruit_MLX90393::readData(float *x, float *y, float *z) {
   if (!startSingleMeasurement())
     return false;
-  delay(10);
+  // See MLX90393 Getting Started Guide for fancy formula
+  // tconv = f(OSR, DIG_FILT, OSR2, ZYXT)
+  // For now, using Table 18 from datasheet
+  delay(mlx90393_tconv[_dig_filt][_osr]);
   return readMeasurement(x, y, z);
 }
 
