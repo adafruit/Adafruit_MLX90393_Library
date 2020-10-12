@@ -21,7 +21,6 @@ void setup(void)
   }
   Serial.println("Found a MLX90393 sensor");
 
-
   sensor.setGain(MLX90393_GAIN_2_5X);
   // You can check the gain too
   Serial.print("Gain set to: ");
@@ -35,12 +34,23 @@ void setup(void)
     case MLX90393_GAIN_4X: Serial.println("4 x"); break;
     case MLX90393_GAIN_5X: Serial.println("5 x"); break;
   }
+
+  // Set resolution, per axis
+  sensor.setResolution(MLX90393_X, MLX90393_RES_19);
+  sensor.setResolution(MLX90393_Y, MLX90393_RES_19);
+  sensor.setResolution(MLX90393_Z, MLX90393_RES_16);
+
+  // Set oversampling
+  sensor.setOversampling(MLX90393_OSR_2);
+
+  // Set digital filtering
+  sensor.setFilter(MLX90393_FILTER_6);
 }
 
 void loop(void) {
   float x, y, z;
 
-  // get X Y and Z data at once 
+  // get X Y and Z data at once
   if (sensor.readData(&x, &y, &z)) {
       Serial.print("X: "); Serial.print(x, 4); Serial.println(" uT");
       Serial.print("Y: "); Serial.print(y, 4); Serial.println(" uT");
@@ -52,12 +62,12 @@ void loop(void) {
   delay(500);
 
   /* Or....get a new sensor event, normalized to uTesla */
-  sensors_event_t event; 
+  sensors_event_t event;
   sensor.getEvent(&event);
   /* Display the results (magnetic field is measured in uTesla) */
   Serial.print("X: "); Serial.print(event.magnetic.x);
-  Serial.print(" \tY: "); Serial.print(event.magnetic.y); 
-  Serial.print(" \tZ: "); Serial.print(event.magnetic.z); 
+  Serial.print(" \tY: "); Serial.print(event.magnetic.y);
+  Serial.print(" \tZ: "); Serial.print(event.magnetic.z);
   Serial.println(" uTesla ");
 
   delay(500);
