@@ -296,7 +296,7 @@ bool Adafruit_MLX90393::startSingleMeasurement(void) {
   uint8_t tx[1] = {MLX90393_REG_SM | MLX90393_AXIS_ALL};
 
   /* Set the device to single measurement mode */
-  uint8_t stat = transceive(tx, sizeof(tx));
+  uint8_t stat = transceive(tx, sizeof(tx), NULL, 0, 0);
   if ((stat == MLX90393_STATUS_OK) || (stat == MLX90393_STATUS_SMMODE)) {
     return true;
   }
