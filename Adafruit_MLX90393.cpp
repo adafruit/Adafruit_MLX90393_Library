@@ -363,7 +363,8 @@ bool Adafruit_MLX90393::readData(float *x, float *y, float *z) {
   // See MLX90393 Getting Started Guide for fancy formula
   // tconv = f(OSR, DIG_FILT, OSR2, ZYXT)
   // For now, using Table 18 from datasheet
-  delay(mlx90393_tconv[_dig_filt][_osr]);
+  // Without +10ms delay measurement doesn't always seem to work
+  delay(mlx90393_tconv[_dig_filt][_osr] + 10);
   return readMeasurement(x, y, z);
 }
 
