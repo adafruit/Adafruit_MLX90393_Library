@@ -213,6 +213,8 @@ Adafruit_MLX90393::getResolution(enum mlx90393_axis axis) {
   case MLX90393_Z:
     return _res_z;
   }
+  // shouldn't get here, but to make compiler happy...
+  return _res_x;
 }
 
 /**
