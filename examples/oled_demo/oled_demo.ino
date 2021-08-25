@@ -9,7 +9,7 @@ void setup() {
   //while (!Serial);
   Serial.println("MLX demo");
 
-  if (sensor.begin()) {
+  if (sensor.begin_I2C()) {
     Serial.println("Found a MLX90393 sensor");
   } else {
     Serial.println("No sensor found ... check your wiring?");
