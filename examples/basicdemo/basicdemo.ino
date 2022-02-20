@@ -21,7 +21,7 @@ void setup(void)
   }
   Serial.println("Found a MLX90393 sensor");
 
-  sensor.setGain(MLX90393_GAIN_2_5X);
+  sensor.setGain(MLX90393_GAIN_1X);
   // You can check the gain too
   Serial.print("Gain set to: ");
   switch (sensor.getGain()) {
@@ -35,16 +35,16 @@ void setup(void)
     case MLX90393_GAIN_5X: Serial.println("5 x"); break;
   }
 
-  // Set resolution, per axis
-  sensor.setResolution(MLX90393_X, MLX90393_RES_19);
-  sensor.setResolution(MLX90393_Y, MLX90393_RES_19);
+  // Set resolution, per axis. Aim for sensitivity of ~0.3 for all axes.
+  sensor.setResolution(MLX90393_X, MLX90393_RES_17);
+  sensor.setResolution(MLX90393_Y, MLX90393_RES_17);
   sensor.setResolution(MLX90393_Z, MLX90393_RES_16);
 
   // Set oversampling
-  sensor.setOversampling(MLX90393_OSR_2);
+  sensor.setOversampling(MLX90393_OSR_3);
 
   // Set digital filtering
-  sensor.setFilter(MLX90393_FILTER_6);
+  sensor.setFilter(MLX90393_FILTER_5);
 }
 
 void loop(void) {
