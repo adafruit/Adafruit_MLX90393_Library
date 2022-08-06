@@ -132,6 +132,28 @@ bool Adafruit_MLX90393::reset(void) {
 }
 
 /**
+ * Store the non-volitile memory
+ * @return True if the operation succeeded, otherwise false.
+ */
+bool Adafruit_MLX90393::memoryStore(void) {
+  uint8_t tx[1] = {MLX90393_REG_HS};
+
+  /* Perform the transaction. */
+  return (transceive(tx, sizeof(tx), NULL, 0, 0) == MLX90393_STATUS_OK);
+}
+
+/**
+ * Recall the non-volitile memory
+ * @return True if the operation succeeded, otherwise false.
+ */
+bool Adafruit_MLX90393::memoryRecall(void) {
+  uint8_t tx[1] = {MLX90393_REG_HR};
+
+  /* Perform the transaction. */
+  return (transceive(tx, sizeof(tx), NULL, 0, 0) == MLX90393_STATUS_OK);
+}
+
+/**
  * Sets the sensor gain to the specified level.
  * @param gain  The gain level to set.
  * @return True if the operation succeeded, otherwise false.
@@ -264,6 +286,57 @@ bool Adafruit_MLX90393::setOversampling(
  */
 enum mlx90393_oversampling Adafruit_MLX90393::getOversampling(void) {
   return _osr;
+}
+
+/**
+ * Sets the axis constant offet correction to the specified offset.
+ * @param axis  The axis to set.
+ * @param offset  The offset.
+ * @return True if the operation succeeded, otherwise false.
+ */
+bool Adafruit_MLX90393::setOffset(enum mlx90393_axis axis, uint16_t offset) {
+  uint8_t reg;
+
+  switch (axis) {
+    case MLX90393_X: 
+      reg = MLX90393_CONF5;
+      break;
+    case MLX90393_Y: 
+      reg = MLX90393_CONF6;
+      break;
+    case MLX90393_Z: 
+      reg = MLX90393_CONF7;
+      break;
+  }
+
+  return writeRegister(reg, offset);
+}
+
+/**
+ * Gets the offset of the axis constant offet correction.
+ * This reads the offset from the sensors memory, 
+ * as it can be helpful to persist these offsets across power cycles.
+ * @param axis  The axis to get.
+ * @return The offset.
+ */
+uint16_t Adafruit_MLX90393::getOffset(enum mlx90393_axis axis) {
+  uint8_t reg = 0;
+  uint16_t data;
+
+  switch (axis) {
+    case MLX90393_X: 
+      reg = MLX90393_CONF5;
+      break;
+    case MLX90393_Y: 
+      reg = MLX90393_CONF6;
+      break;
+    case MLX90393_Z: 
+      reg = MLX90393_CONF7;
+      break;
+  }
+
+  readRegister(reg, &data);
+  return data;
 }
 
 /**

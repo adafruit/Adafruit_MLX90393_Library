@@ -30,6 +30,9 @@
 #define MLX90393_CONF2 (0x01)         /**< Burst, comm mode */
 #define MLX90393_CONF3 (0x02)         /**< Oversampling, filter, res. */
 #define MLX90393_CONF4 (0x03)         /**< Sensitivty drift. */
+#define MLX90393_CONF5 (0x04)         /**< X-axis constant offset correction. */
+#define MLX90393_CONF6 (0x05)         /**< Y-axis constant offset correction. */
+#define MLX90393_CONF7 (0x06)         /**< Z-axis constant offset correction. */
 #define MLX90393_GAIN_SHIFT (4)       /**< Left-shift for gain bits. */
 #define MLX90393_HALL_CONF (0x0C)     /**< Hall plate spinning rate adj. */
 #define MLX90393_STATUS_OK (0x00)     /**< OK value for status response. */
@@ -48,7 +51,7 @@ enum {
   MLX90393_REG_WR = (0x60),  /**< Write register. */
   MLX90393_REG_EX = (0x80),  /**> Exit moode. */
   MLX90393_REG_HR = (0xD0),  /**< Memory recall. */
-  MLX90393_REG_HS = (0x70),  /**< Memory store. */
+  MLX90393_REG_HS = (0xE0),  /**< Memory store. */
   MLX90393_REG_RT = (0xF0),  /**< Reset. */
   MLX90393_REG_NOP = (0x00), /**< NOP. */
 };
@@ -178,6 +181,9 @@ public:
   bool reset(void);
   bool exitMode(void);
 
+  bool memoryStore();
+  bool memoryRecall();
+
   bool readMeasurement(float *x, float *y, float *z);
   bool startSingleMeasurement(void);
 
@@ -192,6 +198,9 @@ public:
 
   bool setOversampling(enum mlx90393_oversampling oversampling);
   enum mlx90393_oversampling getOversampling(void);
+
+  bool setOffset(enum mlx90393_axis, uint16_t offset);
+  uint16_t getOffset(enum mlx90393_axis);
 
   bool setTrigInt(bool state);
   bool readData(float *x, float *y, float *z);
