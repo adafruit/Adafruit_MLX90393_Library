@@ -371,18 +371,20 @@ bool Adafruit_MLX90393::readData(float *x, float *y, float *z) {
 }
 
 bool Adafruit_MLX90393::writeRegister(uint8_t reg, uint16_t data) {
-  uint8_t tx[4] = {MLX90393_REG_WR,
-                   data >> 8,   // high byte
-                   data & 0xFF, // low byte
-                   reg << 2};   // the register itself, shift up by 2 bits!
+  uint8_t tx[4] = {
+      MLX90393_REG_WR,
+      (uint8_t)(data >> 8),   // high byte
+      (uint8_t)(data & 0xFF), // low byte
+      (uint8_t)(reg << 2)};   // the register itself, shift up by 2 bits!
 
   /* Perform the transaction. */
   return (transceive(tx, sizeof(tx), NULL, 0, 0) == MLX90393_STATUS_OK);
 }
 
 bool Adafruit_MLX90393::readRegister(uint8_t reg, uint16_t *data) {
-  uint8_t tx[2] = {MLX90393_REG_RR,
-                   reg << 2}; // the register itself, shift up by 2 bits!
+  uint8_t tx[2] = {
+      MLX90393_REG_RR,
+      (uint8_t)(reg << 2)}; // the register itself, shift up by 2 bits!
 
   uint8_t rx[2];
 
