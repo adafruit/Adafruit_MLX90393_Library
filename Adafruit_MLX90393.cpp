@@ -320,7 +320,7 @@ bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
                       | (y == nullptr ? 0 : MLX90393_AXIS_Y)
                       | (z == nullptr ? 0 : MLX90393_AXIS_Z);
 
-  uint8_t tx[1] = {MLX90393_REG_RM | flags};
+  uint8_t tx[1] = {(uint8_t)MLX90393_REG_RM | flags};
   uint8_t rx[6] = {0};
 
   /* Read a single data sample. */
