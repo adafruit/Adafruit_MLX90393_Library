@@ -294,8 +294,9 @@ bool Adafruit_MLX90393::setTrigInt(bool state) {
  *
  * @return True on command success
  */
-bool Adafruit_MLX90393::startSingleMeasurement(void) {
-  uint8_t tx[1] = {MLX90393_REG_SM | MLX90393_AXIS_ALL};
+bool Adafruit_MLX90393::startSingleMeasurement(uint8_t axes) {
+  assert((axes & ~MLX90393_AXIS_ALL) == 0);
+  uint8_t tx[1] = {MLX90393_REG_SM | axes};
 
   /* Set the device to single measurement mode */
   uint8_t stat = transceive(tx, sizeof(tx), NULL, 0, 0);
@@ -315,7 +316,11 @@ bool Adafruit_MLX90393::startSingleMeasurement(void) {
  * @return True on command success
  */
 bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
-  uint8_t tx[1] = {MLX90393_REG_RM | MLX90393_AXIS_ALL};
+  uint8_t flags = (x == nullptr ? 0 : MLX90393_AXIS_X);
+  flags |= (y == nullptr ? 0 : MLX90393_AXIS_Y);
+  flags |= (z == nullptr ? 0 : MLX90393_AXIS_Z);
+
+  uint8_t tx[1] = {MLX90393_REG_RM | flags};
   uint8_t rx[6] = {0};
 
   /* Read a single data sample. */
@@ -343,9 +348,15 @@ bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
   if (_res_z == MLX90393_RES_19)
     zi -= 0x4000;
 
-  *x = (float)xi * mlx90393_lsb_lookup[0][_gain][_res_x][0];
-  *y = (float)yi * mlx90393_lsb_lookup[0][_gain][_res_y][0];
-  *z = (float)zi * mlx90393_lsb_lookup[0][_gain][_res_z][1];
+  if (x != nullptr) {
+    *x = (float)xi * mlx90393_lsb_lookup[0][_gain][_res_x][0];
+  }
+  if (y != nullptr) {
+    *y = (float)yi * mlx90393_lsb_lookup[0][_gain][_res_y][0];
+  }
+  if (z != nullptr) {
+    *z = (float)zi * mlx90393_lsb_lookup[0][_gain][_res_z][1];
+  }
 
   return true;
 }
@@ -360,7 +371,11 @@ bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
  * @return True if the operation succeeded, otherwise false.
  */
 bool Adafruit_MLX90393::readData(float *x, float *y, float *z) {
-  if (!startSingleMeasurement())
+  uint8_t flags = (x == nullptr ? 0 : MLX90393_AXIS_X);
+  flags |= (y == nullptr ? 0 : MLX90393_AXIS_Y);
+  flags |= (z == nullptr ? 0 : MLX90393_AXIS_Z);
+
+  if (!startSingleMeasurement(flags))
     return false;
   // See MLX90393 Getting Started Guide for fancy formula
   // tconv = f(OSR, DIG_FILT, OSR2, ZYXT)

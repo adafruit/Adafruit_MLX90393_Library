@@ -25,6 +25,9 @@
 
 #define MLX90393_DEFAULT_ADDR (0x0C) /* Can also be 0x18, depending on IC */
 
+#define MLX90393_AXIS_X (0x02)        /**< X axis bit for commands. */
+#define MLX90393_AXIS_Y (0x04)        /**< Y axis bit for commands. */
+#define MLX90393_AXIS_Z (0x08)        /**< Z axis bit for commands. */
 #define MLX90393_AXIS_ALL (0x0E)      /**< X+Y+Z axis bits for commands. */
 #define MLX90393_CONF1 (0x00)         /**< Gain */
 #define MLX90393_CONF2 (0x01)         /**< Burst, comm mode */
@@ -179,7 +182,7 @@ public:
   bool exitMode(void);
 
   bool readMeasurement(float *x, float *y, float *z);
-  bool startSingleMeasurement(void);
+  bool startSingleMeasurement(uint8_t axes = MLX90393_AXIS_ALL);
 
   bool setGain(enum mlx90393_gain gain);
   enum mlx90393_gain getGain(void);
