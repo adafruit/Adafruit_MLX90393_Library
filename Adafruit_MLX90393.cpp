@@ -371,7 +371,7 @@ bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
  *                                    will always be configured with single measurement,
  *                                    but the user can select how they want to consume
  *                                    those measurements.
- * @param mlx90393_read_delay_mode    There is a delay to read the measurement. Should
+ * @param read_delay_mode             There is a delay to read the measurement. Should
  *                                    the user supply it, or should we calculate it?
  * @param maximum_read_delay_ms       If the user is supplying the read delay, they must
  *                                    specify it here. In MLX90393_READ_MODE_PRIORITIZE_BUS_TRAFFIC,
@@ -385,7 +385,7 @@ bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
  */
 bool Adafruit_MLX90393::readData(float *x, float *y, float *z,
                                  enum mlx90393_read_mode read_mode,
-                                 enum mlx90393_read_delay_mode mlx90393_read_delay_mode,
+                                 enum mlx90393_read_delay_mode read_delay_mode,
                                  unsigned long maximum_read_delay_ms) {
   const uint8_t flags = (x == nullptr ? 0 : MLX90393_AXIS_X)
                       | (y == nullptr ? 0 : MLX90393_AXIS_Y)
@@ -396,7 +396,7 @@ bool Adafruit_MLX90393::readData(float *x, float *y, float *z,
   }
 
   float maximum_query_time_ms = maximum_read_delay_ms;
-  if (mlx90393_read_delay_mode == MLX90393_READ_DELAY_MODE_CALCULATE) {
+  if (read_delay_mode == MLX90393_READ_DELAY_MODE_CALCULATE) {
     // See MLX90393 Getting Started Guide for fancy formula
     // tconv = f(OSR, DIG_FILT, OSR2, ZYXT)
     // For now, using Table 18 from datasheet

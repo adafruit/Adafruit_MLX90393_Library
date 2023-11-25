@@ -209,7 +209,7 @@ public:
   bool setTrigInt(bool state);
   bool readData(float *x, float *y, float *z,
                 enum mlx90393_read_mode read_mode = MLX90393_READ_MODE_PRIORITIZE_BUS_TRAFFIC,
-                enum mlx90393_read_delay_mode = MLX90393_READ_DELAY_MODE_CALCULATE,
+                enum mlx90393_read_delay_mode read_delay_mode = MLX90393_READ_DELAY_MODE_CALCULATE,
                 unsigned long maximum_read_delay_ms = 20);
 
   bool getEvent(sensors_event_t *event);
