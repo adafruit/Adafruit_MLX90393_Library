@@ -103,6 +103,16 @@ typedef enum mlx90393_oversampling {
   MLX90393_OSR_3,
 } mlx90393_oversampling_t;
 
+typedef enum mlx90393_read_mode {
+  MLX90393_READ_MODE_PRIORITIZE_BUS_TRAFFIC,
+  MLX90393_READ_MODE_PRIORITIZE_PERFORMANCE,
+} mlx90393_read_mode;
+
+typedef enum mlx90393_read_delay_mode {
+  MLX90393_READ_DELAY_MODE_CALCULATE,
+  MLX90393_READ_DELAY_MODE_SUPPLY,
+} mlx90393_read_delay_mode;
+
 /** Lookup table to convert raw values to uT based on [HALLCONF][GAIN_SEL][RES].
  */
 const float mlx90393_lsb_lookup[2][8][4][2] = {
@@ -197,7 +207,10 @@ public:
   enum mlx90393_oversampling getOversampling(void);
 
   bool setTrigInt(bool state);
-  bool readData(float *x, float *y, float *z);
+  bool readData(float *x, float *y, float *z,
+                mlx90393_read_mode read_mode = MLX90393_READ_MODE_PRIORITIZE_BUS_TRAFFIC,
+                mlx90393_read_delay_mode = MLX90393_READ_DELAY_MODE_CALCULATE,
+                unsigned long maximum_read_delay_ms = 20);
 
   bool getEvent(sensors_event_t *event);
   void getSensor(sensor_t *sensor);
