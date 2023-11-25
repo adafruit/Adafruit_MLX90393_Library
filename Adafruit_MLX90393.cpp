@@ -293,6 +293,8 @@ bool Adafruit_MLX90393::setTrigInt(bool state) {
 /**
  * Begin a single measurement on all axes
  *
+ * @param axes  Which axes to measure.
+ *
  * @return True on command success
  */
 bool Adafruit_MLX90393::startSingleMeasurement(uint8_t axes) {
