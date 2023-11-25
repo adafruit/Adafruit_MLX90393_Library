@@ -384,8 +384,8 @@ bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
  * @return True if the operation succeeded, otherwise false.
  */
 bool Adafruit_MLX90393::readData(float *x, float *y, float *z,
-                                 mlx90393_read_mode read_mode,
-                                 mlx90393_read_delay_mode mlx90393_read_delay_mode,
+                                 enum mlx90393_read_mode read_mode,
+                                 enum mlx90393_read_delay_mode mlx90393_read_delay_mode,
                                  unsigned long maximum_read_delay_ms) {
   const uint8_t flags = (x == nullptr ? 0 : MLX90393_AXIS_X)
                       | (y == nullptr ? 0 : MLX90393_AXIS_Y)
