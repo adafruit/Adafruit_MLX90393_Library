@@ -296,7 +296,7 @@ bool Adafruit_MLX90393::setTrigInt(bool state) {
  * @return True on command success
  */
 bool Adafruit_MLX90393::startSingleMeasurement(uint8_t axes) {
-  uint8_t tx[1] = {(uint8_t)MLX90393_REG_SM | axes};
+  uint8_t tx[1] = {uint8_t(MLX90393_REG_SM | axes)};
 
   /* Set the device to single measurement mode */
   uint8_t stat = transceive(tx, sizeof(tx), NULL, 0, 0);
@@ -320,7 +320,7 @@ bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
                       | (y == nullptr ? 0 : MLX90393_AXIS_Y)
                       | (z == nullptr ? 0 : MLX90393_AXIS_Z);
 
-  uint8_t tx[1] = {(uint8_t)MLX90393_REG_RM | flags};
+  uint8_t tx[1] = {uint8_t(MLX90393_REG_RM | flags)};
   uint8_t rx[6] = {0};
 
   /* Read a single data sample. */
