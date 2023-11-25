@@ -316,9 +316,9 @@ bool Adafruit_MLX90393::startSingleMeasurement(uint8_t axes) {
  * @return True on command success
  */
 bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
-  const uint8_t flags = (x == nullptr ? 0 : MLX90393_AXIS_X)
-                      | (y == nullptr ? 0 : MLX90393_AXIS_Y)
-                      | (z == nullptr ? 0 : MLX90393_AXIS_Z);
+  const uint8_t flags = (x == nullptr ? 0 : MLX90393_AXIS_X) |
+                        (y == nullptr ? 0 : MLX90393_AXIS_Y) |
+                        (z == nullptr ? 0 : MLX90393_AXIS_Z);
 
   uint8_t tx[1] = {uint8_t(MLX90393_REG_RM | flags)};
   uint8_t rx[6] = {0};
@@ -364,32 +364,33 @@ bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
 /**
  * Performs a single X/Y/Z conversion and returns the results.
  *
- * @param x                           Pointer to where the 'x' value should be stored.
- * @param y                           Pointer to where the 'y' value should be stored.
- * @param z                           Pointer to where the 'z' value should be stored.
- * @param read_mode                   Library mode to read the sensor with. The device
- *                                    will always be configured with single measurement,
- *                                    but the user can select how they want to consume
- *                                    those measurements.
- * @param read_delay_mode             There is a delay to read the measurement. Should
- *                                    the user supply it, or should we calculate it?
- * @param maximum_read_delay_ms       If the user is supplying the read delay, they must
- *                                    specify it here. In MLX90393_READ_MODE_PRIORITIZE_BUS_TRAFFIC,
- *                                    the driver will wait for this time before trying to
- *                                    read the device. In MLX90393_READ_MODE_PRIORITIZE_PERFORMANCE,
- *                                    the driver will poll the device for at most this
- *                                    long before timing out. Note that if 0 is specified,
- *                                    it will just time out immediately, not wait forever.
- * 
+ * @param x                           Pointer to where the 'x' value should be
+ * stored.
+ * @param y                           Pointer to where the 'y' value should be
+ * stored.
+ * @param z                           Pointer to where the 'z' value should be
+ * stored.
+ * @param read_mode                   Library mode to read the sensor with. The
+ * device will always be configured with single measurement, but the user can
+ * select how they want to consume those measurements.
+ * @param read_delay_mode             There is a delay to read the measurement.
+ * Should the user supply it, or should we calculate it?
+ * @param maximum_read_delay_ms       If the user is supplying the read delay,
+ * they must specify it here. In MLX90393_READ_MODE_PRIORITIZE_BUS_TRAFFIC, the
+ * driver will wait for this time before trying to read the device. In
+ * MLX90393_READ_MODE_PRIORITIZE_PERFORMANCE, the driver will poll the device
+ * for at most this long before timing out. Note that if 0 is specified, it will
+ * just time out immediately, not wait forever.
+ *
  * @return True if the operation succeeded, otherwise false.
  */
 bool Adafruit_MLX90393::readData(float *x, float *y, float *z,
                                  enum mlx90393_read_mode read_mode,
                                  enum mlx90393_read_delay_mode read_delay_mode,
                                  unsigned long maximum_read_delay_ms) {
-  const uint8_t flags = (x == nullptr ? 0 : MLX90393_AXIS_X)
-                      | (y == nullptr ? 0 : MLX90393_AXIS_Y)
-                      | (z == nullptr ? 0 : MLX90393_AXIS_Z);
+  const uint8_t flags = (x == nullptr ? 0 : MLX90393_AXIS_X) |
+                        (y == nullptr ? 0 : MLX90393_AXIS_Y) |
+                        (z == nullptr ? 0 : MLX90393_AXIS_Z);
 
   if (!startSingleMeasurement(flags)) {
     return false;
