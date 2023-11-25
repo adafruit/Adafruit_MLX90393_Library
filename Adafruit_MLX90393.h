@@ -106,12 +106,12 @@ typedef enum mlx90393_oversampling {
 typedef enum mlx90393_read_mode {
   MLX90393_READ_MODE_PRIORITIZE_BUS_TRAFFIC,
   MLX90393_READ_MODE_PRIORITIZE_PERFORMANCE,
-} mlx90393_read_mode;
+} mlx90393_read_mode_t;
 
 typedef enum mlx90393_read_delay_mode {
   MLX90393_READ_DELAY_MODE_CALCULATE,
   MLX90393_READ_DELAY_MODE_SUPPLY,
-} mlx90393_read_delay_mode;
+} mlx90393_read_delay_mode_t;
 
 /** Lookup table to convert raw values to uT based on [HALLCONF][GAIN_SEL][RES].
  */
