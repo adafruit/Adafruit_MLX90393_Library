@@ -16,6 +16,7 @@
   MIT license, all text above must be included in any redistribution
  *****************************************************************************/
 #include "Adafruit_MLX90393.h"
+#include <limits.h>
 
 /**
  * Instantiates a new Adafruit_MLX90393 class instance
@@ -292,10 +293,12 @@ bool Adafruit_MLX90393::setTrigInt(bool state) {
 /**
  * Begin a single measurement on all axes
  *
+ * @param axes  Which axes to measure.
+ *
  * @return True on command success
  */
-bool Adafruit_MLX90393::startSingleMeasurement(void) {
-  uint8_t tx[1] = {MLX90393_REG_SM | MLX90393_AXIS_ALL};
+bool Adafruit_MLX90393::startSingleMeasurement(uint8_t axes) {
+  uint8_t tx[1] = {uint8_t(MLX90393_REG_SM | axes)};
 
   /* Set the device to single measurement mode */
   uint8_t stat = transceive(tx, sizeof(tx), NULL, 0, 0);
@@ -315,7 +318,11 @@ bool Adafruit_MLX90393::startSingleMeasurement(void) {
  * @return True on command success
  */
 bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
-  uint8_t tx[1] = {MLX90393_REG_RM | MLX90393_AXIS_ALL};
+  const uint8_t flags = (x == nullptr ? 0 : MLX90393_AXIS_X) |
+                        (y == nullptr ? 0 : MLX90393_AXIS_Y) |
+                        (z == nullptr ? 0 : MLX90393_AXIS_Z);
+
+  uint8_t tx[1] = {uint8_t(MLX90393_REG_RM | flags)};
   uint8_t rx[6] = {0};
 
   /* Read a single data sample. */
@@ -343,9 +350,15 @@ bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
   if (_res_z == MLX90393_RES_19)
     zi -= 0x4000;
 
-  *x = (float)xi * mlx90393_lsb_lookup[0][_gain][_res_x][0];
-  *y = (float)yi * mlx90393_lsb_lookup[0][_gain][_res_y][0];
-  *z = (float)zi * mlx90393_lsb_lookup[0][_gain][_res_z][1];
+  if (x != nullptr) {
+    *x = (float)xi * mlx90393_lsb_lookup[0][_gain][_res_x][0];
+  }
+  if (y != nullptr) {
+    *y = (float)yi * mlx90393_lsb_lookup[0][_gain][_res_y][0];
+  }
+  if (z != nullptr) {
+    *z = (float)zi * mlx90393_lsb_lookup[0][_gain][_res_z][1];
+  }
 
   return true;
 }
@@ -353,21 +366,72 @@ bool Adafruit_MLX90393::readMeasurement(float *x, float *y, float *z) {
 /**
  * Performs a single X/Y/Z conversion and returns the results.
  *
- * @param x     Pointer to where the 'x' value should be stored.
- * @param y     Pointer to where the 'y' value should be stored.
- * @param z     Pointer to where the 'z' value should be stored.
+ * @param x                           Pointer to where the 'x' value should be
+ * stored.
+ * @param y                           Pointer to where the 'y' value should be
+ * stored.
+ * @param z                           Pointer to where the 'z' value should be
+ * stored.
+ * @param read_mode                   Library mode to read the sensor with. The
+ * device will always be configured with single measurement, but the user can
+ * select how they want to consume those measurements.
+ * @param read_delay_mode             There is a delay to read the measurement.
+ * Should the user supply it, or should we calculate it?
+ * @param maximum_read_delay_ms       If the user is supplying the read delay,
+ * they must specify it here. In MLX90393_READ_MODE_PRIORITIZE_BUS_TRAFFIC, the
+ * driver will wait for this time before trying to read the device. In
+ * MLX90393_READ_MODE_PRIORITIZE_PERFORMANCE, the driver will poll the device
+ * for at most this long before timing out. Note that if 0 is specified, it will
+ * just time out immediately, not wait forever.
  *
  * @return True if the operation succeeded, otherwise false.
  */
-bool Adafruit_MLX90393::readData(float *x, float *y, float *z) {
-  if (!startSingleMeasurement())
+bool Adafruit_MLX90393::readData(float *x, float *y, float *z,
+                                 enum mlx90393_read_mode read_mode,
+                                 enum mlx90393_read_delay_mode read_delay_mode,
+                                 unsigned long maximum_read_delay_ms) {
+  const uint8_t flags = (x == nullptr ? 0 : MLX90393_AXIS_X) |
+                        (y == nullptr ? 0 : MLX90393_AXIS_Y) |
+                        (z == nullptr ? 0 : MLX90393_AXIS_Z);
+
+  if (!startSingleMeasurement(flags)) {
     return false;
-  // See MLX90393 Getting Started Guide for fancy formula
-  // tconv = f(OSR, DIG_FILT, OSR2, ZYXT)
-  // For now, using Table 18 from datasheet
-  // Without +10ms delay measurement doesn't always seem to work
-  delay(mlx90393_tconv[_dig_filt][_osr] + 10);
-  return readMeasurement(x, y, z);
+  }
+
+  float maximum_query_time_ms = maximum_read_delay_ms;
+  if (read_delay_mode == MLX90393_READ_DELAY_MODE_CALCULATE) {
+    // See MLX90393 Getting Started Guide for fancy formula
+    // tconv = f(OSR, DIG_FILT, OSR2, ZYXT)
+    // For now, using Table 18 from datasheet
+    // Without +10ms delay measurement doesn't always seem to work
+    maximum_query_time_ms = mlx90393_tconv[_dig_filt][_osr] + 10;
+  }
+
+  bool status = false;
+  if (read_mode == MLX90393_READ_MODE_PRIORITIZE_PERFORMANCE) {
+    // Don't get fancy. Just poll the senosr until it gives us the data.
+    bool done = false;
+    float start_time = millis();
+    float elapsed_time = 0.f;
+    while (!done && elapsed_time < maximum_query_time_ms) {
+      done = readMeasurement(x, y, z);
+      const float result_time = millis();
+      if (result_time >= start_time) {
+        elapsed_time = result_time - start_time;
+      } else {
+        // overflow
+        elapsed_time = (ULONG_MAX - start_time) + result_time;
+      }
+    }
+    status = done;
+  } else if (read_mode == MLX90393_READ_MODE_PRIORITIZE_BUS_TRAFFIC) {
+    // Wait the maximum query time, then bail.
+    delay(maximum_query_time_ms);
+    status = readMeasurement(x, y, z);
+  } else {
+    status = false;
+  }
+  return status;
 }
 
 bool Adafruit_MLX90393::writeRegister(uint8_t reg, uint16_t data) {

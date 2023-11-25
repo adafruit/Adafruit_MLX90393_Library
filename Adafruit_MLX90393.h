@@ -25,6 +25,9 @@
 
 #define MLX90393_DEFAULT_ADDR (0x0C) /* Can also be 0x18, depending on IC */
 
+#define MLX90393_AXIS_X (0x02)        /**< X axis bit for commands. */
+#define MLX90393_AXIS_Y (0x04)        /**< Y axis bit for commands. */
+#define MLX90393_AXIS_Z (0x08)        /**< Z axis bit for commands. */
 #define MLX90393_AXIS_ALL (0x0E)      /**< X+Y+Z axis bits for commands. */
 #define MLX90393_CONF1 (0x00)         /**< Gain */
 #define MLX90393_CONF2 (0x01)         /**< Burst, comm mode */
@@ -99,6 +102,16 @@ typedef enum mlx90393_oversampling {
   MLX90393_OSR_2,
   MLX90393_OSR_3,
 } mlx90393_oversampling_t;
+
+typedef enum mlx90393_read_mode {
+  MLX90393_READ_MODE_PRIORITIZE_BUS_TRAFFIC,
+  MLX90393_READ_MODE_PRIORITIZE_PERFORMANCE,
+} mlx90393_read_mode_t;
+
+typedef enum mlx90393_read_delay_mode {
+  MLX90393_READ_DELAY_MODE_CALCULATE,
+  MLX90393_READ_DELAY_MODE_SUPPLY,
+} mlx90393_read_delay_mode_t;
 
 /** Lookup table to convert raw values to uT based on [HALLCONF][GAIN_SEL][RES].
  */
@@ -179,7 +192,7 @@ public:
   bool exitMode(void);
 
   bool readMeasurement(float *x, float *y, float *z);
-  bool startSingleMeasurement(void);
+  bool startSingleMeasurement(uint8_t axes = MLX90393_AXIS_ALL);
 
   bool setGain(enum mlx90393_gain gain);
   enum mlx90393_gain getGain(void);
@@ -194,7 +207,12 @@ public:
   enum mlx90393_oversampling getOversampling(void);
 
   bool setTrigInt(bool state);
-  bool readData(float *x, float *y, float *z);
+  bool readData(float *x, float *y, float *z,
+                enum mlx90393_read_mode read_mode =
+                    MLX90393_READ_MODE_PRIORITIZE_BUS_TRAFFIC,
+                enum mlx90393_read_delay_mode read_delay_mode =
+                    MLX90393_READ_DELAY_MODE_CALCULATE,
+                unsigned long maximum_read_delay_ms = 20);
 
   bool getEvent(sensors_event_t *event);
   void getSensor(sensor_t *sensor);
