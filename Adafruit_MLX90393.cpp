@@ -16,7 +16,7 @@
   MIT license, all text above must be included in any redistribution
  *****************************************************************************/
 #include "Adafruit_MLX90393.h"
-#include <climits>
+#include <limits.h>
 
 /**
  * Instantiates a new Adafruit_MLX90393 class instance
