@@ -16,6 +16,7 @@
   MIT license, all text above must be included in any redistribution
  *****************************************************************************/
 #include "Adafruit_MLX90393.h"
+#include <climits>
 
 /**
  * Instantiates a new Adafruit_MLX90393 class instance
@@ -295,7 +296,6 @@ bool Adafruit_MLX90393::setTrigInt(bool state) {
  * @return True on command success
  */
 bool Adafruit_MLX90393::startSingleMeasurement(uint8_t axes) {
-  assert((axes & ~MLX90393_AXIS_ALL) == 0);
   uint8_t tx[1] = {MLX90393_REG_SM | axes};
 
   /* Set the device to single measurement mode */
@@ -417,7 +417,7 @@ bool Adafruit_MLX90393::readData(float *x, float *y, float *z,
         elapsed_time = result_time - start_time;
       } else {
         // overflow
-        elapsed_time = (std::numeric_limits<unsigned long>::max() - start_time) + result_time;
+        elapsed_time = (ULONG_MAX - start_time) + result_time;
       }
     }
     status = done;
